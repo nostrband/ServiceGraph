@@ -1,0 +1,148 @@
+{
+  "version": "1",
+  "skill": "find-service-providers",
+  "split_strategy": "Manual. The hardest cases (P4 indirect intent, N6 consumer-legal near-miss, N9 code task with keyword overlap) are in the train set so iteration has signal. Validation holds out cleaner generalization checks across positive industries (management_consulting, IT, marketing, BYO-list) and negative shapes (ecommerce, freelancer, industry research, generic finance).",
+  "passing_rule": "should_trigger=true → trigger_rate > 0.5 over 3 runs. should_trigger=false → trigger_rate ≤ 0.5.",
+  "queries": [
+    {
+      "id": "P1",
+      "split": "train",
+      "should_trigger": true,
+      "query": "Find me three boutique IP law firms in California that handle patent prosecution for hardware startups",
+      "notes": "Direct ask, named industry, location, sub-criterion."
+    },
+    {
+      "id": "P2",
+      "split": "train",
+      "should_trigger": true,
+      "query": "need a shortlist of mid size SEO agency in NY or NJ with strong B2B saas portfolio",
+      "notes": "Casual phrasing, typo, multi-state."
+    },
+    {
+      "id": "P3",
+      "split": "train",
+      "should_trigger": true,
+      "query": "we're hiring a CPA firm for a delaware c-corp series A audit, recommend 5 options under 50 ppl",
+      "notes": "Industry jargon, size constraint, narrative form."
+    },
+    {
+      "id": "P4",
+      "split": "train",
+      "should_trigger": true,
+      "query": "my boss wants me to find someone reliable to run our open enrollment communications and benefits comparison materials for 200 employees",
+      "notes": "HARD: indirect intent — never names HR consulting / agency / firm. Tests whether description fires on described-shape-of-need."
+    },
+    {
+      "id": "P6",
+      "split": "train",
+      "should_trigger": true,
+      "query": "shortlist civil engineering firms in Florida that focus on transportation infrastructure",
+      "notes": "Narrow sub-tag (engineering → civil → transportation)."
+    },
+    {
+      "id": "P9",
+      "split": "train",
+      "should_trigger": true,
+      "query": "here are 12 marketing agency domains I scraped — can you pull contact info and confirm which are in the US",
+      "notes": "BYO apex list, enrichment use-case, hits /get/:id path."
+    },
+    {
+      "id": "P5",
+      "split": "validation",
+      "should_trigger": true,
+      "query": "build me a list of 50 US management consultancies with both strategy and operations practices",
+      "notes": "Longlist scale, multi-tag intersection."
+    },
+    {
+      "id": "P7",
+      "split": "validation",
+      "should_trigger": true,
+      "query": "find HIPAA-savvy IT consultancies in Texas that can support medical device clients",
+      "notes": "Keyword + structured filter combo."
+    },
+    {
+      "id": "P8",
+      "split": "validation",
+      "should_trigger": true,
+      "query": "compare three SEO agencies with at least a 4-star Clutch rating and 20+ reviews",
+      "notes": "Quality threshold + third-party listing presence."
+    },
+    {
+      "id": "P10",
+      "split": "validation",
+      "should_trigger": true,
+      "query": "we shortlisted three NYC PR firms — edelmanish.com, inkysquid.com, mossreputation.com — get me their full profiles before our pitch meeting",
+      "notes": "BYO-list + procurement vetting flow."
+    },
+    {
+      "id": "N1",
+      "split": "train",
+      "should_trigger": false,
+      "query": "find me a marketing agency in London that specializes in luxury brands",
+      "notes": "Non-US — keyword overlap 'marketing agency' but out of scope."
+    },
+    {
+      "id": "N3",
+      "split": "train",
+      "should_trigger": false,
+      "query": "what's the best CRM for a small marketing agency?",
+      "notes": "Software-product recommendation, not firm directory."
+    },
+    {
+      "id": "N5",
+      "split": "train",
+      "should_trigger": false,
+      "query": "I need to hire a senior backend engineer for our team — where should I post the job?",
+      "notes": "Recruiting an employee, not procuring a firm."
+    },
+    {
+      "id": "N6",
+      "split": "train",
+      "should_trigger": false,
+      "query": "I need a divorce lawyer in Chicago for personal matters",
+      "notes": "HARD: consumer/B2C legal services. Catalog is B2B."
+    },
+    {
+      "id": "N7",
+      "split": "train",
+      "should_trigger": false,
+      "query": "write me a marketing strategy for launching a fitness app",
+      "notes": "Do-the-work, not find-a-firm-to-do-the-work."
+    },
+    {
+      "id": "N9",
+      "split": "train",
+      "should_trigger": false,
+      "query": "review this Python script that scrapes consulting firm websites",
+      "notes": "HARD: code task, keyword 'consulting firm' appears but task is unrelated."
+    },
+    {
+      "id": "N2",
+      "split": "validation",
+      "should_trigger": false,
+      "query": "recommend an online store that sells handmade leather goods",
+      "notes": "Retail/ecommerce — explicitly out of scope."
+    },
+    {
+      "id": "N4",
+      "split": "validation",
+      "should_trigger": false,
+      "query": "find me a freelance graphic designer on Upwork for a one-off logo",
+      "notes": "Individual freelancer / gig marketplace."
+    },
+    {
+      "id": "N8",
+      "split": "validation",
+      "should_trigger": false,
+      "query": "how big is the US management consulting market in 2025?",
+      "notes": "Industry research, not procurement."
+    },
+    {
+      "id": "N10",
+      "split": "validation",
+      "should_trigger": false,
+      "query": "what's the difference between a 401k and a Roth IRA?",
+      "notes": "Generic personal-finance question with zero firm-search intent."
+    }
+  ]
+}
