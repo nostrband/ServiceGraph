@@ -55,17 +55,22 @@ and exits non-zero if any query failed (handy for CI later).
 **Workflow**: run on `train` first, iterate the description, only score
 `validation` when you're picking the final description.
 
-**Detection caveat**: the script greps the JSON transcript for
-`tool_use` events with `name="Skill"` and `input.skill="find-service-providers"`.
-If Claude Code's transcript shape ever changes, the script will silently
-report 0 triggers everywhere — sanity-check by running
+**Detection caveat**: the script reads Claude Code's NDJSON transcript
+(`--output-format stream-json --verbose`) and greps for `assistant`
+records whose `message.content` contains a `tool_use` with
+`name="Skill"` and `input.skill="find-service-providers"`. If Claude
+Code's shape ever changes, the script will silently report 0 triggers
+everywhere — sanity-check by running
 
 ```bash
 claude -p "find me three boutique IP law firms in California" \
-  --output-format json | jq '.messages[].content[]? | select(.type=="tool_use")'
+  --output-format stream-json --verbose \
+  --dangerously-skip-permissions </dev/null \
+  | jq -c 'select(.type=="assistant") | .message.content[]? | select(.type=="tool_use") | {name, input_skill: .input.skill}'
 ```
 
-manually and confirming the shape still matches.
+manually and confirming you see a `{"name":"Skill","input_skill":"find-service-providers"}`
+line.
 
 ## Interpreting results
 

@@ -32,23 +32,37 @@ command -v jq     >/dev/null 2>&1 || { echo "jq not on PATH"          >&2; exit 
 
 # Returns 0 iff Claude Code invoked the Skill tool with our skill name.
 #
-# --dangerously-skip-permissions is required: without it, claude -p
-# blocks indefinitely on the first tool-call confirmation prompt and
-# the eval never exits. This is fine here because we only inspect the
-# transcript for whether the Skill tool was invoked — any side-effect
-# tool calls the agent makes during the run are ignored.
+# Why each flag matters:
+#   --dangerously-skip-permissions: without it, claude -p blocks on the
+#     first tool-call confirmation prompt and the eval never exits. We
+#     only inspect the transcript for whether Skill was invoked, so
+#     any side-effect tool calls during the run are irrelevant.
+#   --output-format stream-json --verbose: the default `json` format
+#     emits only the final result message, which usually doesn't
+#     contain the Skill tool_use event. stream-json with --verbose
+#     emits one NDJSON record per assistant/user turn so we can find
+#     the Skill invocation reliably.
+#   </dev/null: claude reads stdin in -p mode and would otherwise
+#     drain the outer `while read` loop's stdin, killing iteration
+#     after the first query.
 #
-# If the JSON shape ever changes, run a single query manually with
-#   claude -p "<query>" --output-format json --dangerously-skip-permissions
+# If the JSON shape ever changes, capture a sample with
+#   claude -p "<query>" --output-format stream-json --verbose \
+#          --dangerously-skip-permissions </dev/null > sample.ndjson
 # and adjust the jq filter below.
 check_triggered() {
   local q="$1"
-  claude -p "$q" --output-format json --dangerously-skip-permissions 2>/dev/null \
-    | jq -e --arg skill "$SKILL" '
-        any(.messages[]?.content[]?;
-            .type == "tool_use"
-            and .name == "Skill"
-            and (.input.skill // "") == $skill)
+  claude -p "$q" \
+      --output-format stream-json --verbose \
+      --dangerously-skip-permissions \
+      </dev/null 2>/dev/null \
+    | jq --slurp -e --arg skill "$SKILL" '
+        any(.[];
+            .type == "assistant"
+            and any(.message.content[]?;
+                    .type == "tool_use"
+                    and .name == "Skill"
+                    and (.input.skill // "") == $skill))
       ' >/dev/null 2>&1
 }
 
