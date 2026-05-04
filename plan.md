@@ -387,3 +387,10 @@ propose a candidate set of 20 — 10 should-trigger and 10 should-not-
 trigger — and you'll sanity-check that the asks reflect *real* user
 phrasings (you know the audience better than I do). Then we lock the
 set, write `SKILL.md`, run the eval, iterate the description.
+
+### Results
+
+| Version | Train (12) | Validation (8) | Notes |
+|---|---|---|---|
+| v0.1 | 10 / 12 | — | P9 (BYO enrichment) and N6 (consumer legal) failed. |
+| **v0.2** | **12 / 12** | **8 / 8** | Added `enrich` verb + BYO-domain trigger example for P9; sharpened consumer-services exclusion for N6. **Locked.** |
