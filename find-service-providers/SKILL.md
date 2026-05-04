@@ -64,13 +64,23 @@ You'll get five field kinds:
 `/tags`, `/check`, and `/explore` are anonymous. `/search` and `/get`
 require a bearer token.
 
-**Resolution rule**:
+**Resolution rule** — try these sources in order before triggering OTP:
 
-1. **If `$SERVICEGRAPH_TOKEN` is set in the environment, use it
-   directly.** Set the header `Authorization: Bearer $SERVICEGRAPH_TOKEN`
-   on every authed request. Skip the OTP flow.
+1. **Shell environment**: `$SERVICEGRAPH_TOKEN`. Most agent harnesses
+   only inherit explicit `export`s, not dotenv files — so this catches
+   the case where the user has it exported in `~/.bashrc` / `~/.zshrc`.
 
-2. **Otherwise, walk the user through OTP** (one-time, ~30 s):
+2. **Project dotenv files**: read `.env.local` then `.env` in the
+   current working directory and look for a `SERVICEGRAPH_TOKEN=…`
+   line. **This is the common case the agent will miss otherwise** —
+   users frequently put the token in `.env.local` (gitignored) and
+   expect it to "just work," but Claude Code and similar harnesses
+   don't auto-load dotenv files. If you find it, use it; don't ask.
+
+If found in any of the above, set
+`Authorization: Bearer <token>` on every authed request and skip OTP.
+
+3. **Otherwise, walk the user through OTP** (one-time, ~30 s):
    - Ask the user for their email address.
    - `POST /v1/auth/request-otp` with `{"email": "..."}`. Returns 204; a
      6-digit code lands in their inbox.
@@ -79,8 +89,10 @@ require a bearer token.
      "name": "<a label like claude-cli>"}`. Returns
      `{"token": "vk_...", "expires_at": "...", "user": {...}}`.
    - Use that token for the rest of the session.
-   - Tell the user: *"Save this as `SERVICEGRAPH_TOKEN` in your shell rc
-     to skip this step next time. The token is shown once and lasts 90
+   - Tell the user: *"Save this as `SERVICEGRAPH_TOKEN` to skip this
+     step next time — either `export SERVICEGRAPH_TOKEN=…` in your
+     shell rc, or add `SERVICEGRAPH_TOKEN=…` to a `.env.local` file in
+     your project (gitignored). The token is shown once and lasts 90
      days."*
 
 If a `/search` or `/get` returns 401 mid-session, the token expired or

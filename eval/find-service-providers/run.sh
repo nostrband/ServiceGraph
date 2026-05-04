@@ -31,12 +31,19 @@ command -v jq     >/dev/null 2>&1 || { echo "jq not on PATH"          >&2; exit 
 [ -f "$QUERIES" ]                  || { echo "$QUERIES not found"      >&2; exit 1; }
 
 # Returns 0 iff Claude Code invoked the Skill tool with our skill name.
+#
+# --dangerously-skip-permissions is required: without it, claude -p
+# blocks indefinitely on the first tool-call confirmation prompt and
+# the eval never exits. This is fine here because we only inspect the
+# transcript for whether the Skill tool was invoked — any side-effect
+# tool calls the agent makes during the run are ignored.
+#
 # If the JSON shape ever changes, run a single query manually with
-#   claude -p "<query>" --output-format json
+#   claude -p "<query>" --output-format json --dangerously-skip-permissions
 # and adjust the jq filter below.
 check_triggered() {
   local q="$1"
-  claude -p "$q" --output-format json 2>/dev/null \
+  claude -p "$q" --output-format json --dangerously-skip-permissions 2>/dev/null \
     | jq -e --arg skill "$SKILL" '
         any(.messages[]?.content[]?;
             .type == "tool_use"
