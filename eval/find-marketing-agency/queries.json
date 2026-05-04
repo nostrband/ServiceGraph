@@ -1,0 +1,148 @@
+{
+  "version": "1",
+  "skill": "find-marketing-agency",
+  "split_strategy": "Manual. The hardest cases are the sibling-skill deferrals (N1 SEO-only → find-seo-agency, N2 web-dev → find-web-developer) and the indirect intent positive (P7 demand-gen described as 'run our funnel'). Those go in train. Validation tests generalization across remaining sub-services and out-of-scope shapes.",
+  "passing_rule": "should_trigger=true → trigger_rate > 0.5 over 3 runs. should_trigger=false → trigger_rate ≤ 0.5.",
+  "queries": [
+    {
+      "id": "P1",
+      "split": "train",
+      "should_trigger": true,
+      "query": "shortlist three B2B branding agencies in California for a Series-A SaaS company",
+      "notes": "Direct, named sub-service (branding), location, vertical."
+    },
+    {
+      "id": "P3",
+      "split": "train",
+      "should_trigger": true,
+      "query": "find me a PPC shop that specializes in ecommerce — under 50 people, US-based",
+      "notes": "Sub-service: PPC, casual ('shop'), size constraint."
+    },
+    {
+      "id": "P4",
+      "split": "train",
+      "should_trigger": true,
+      "query": "Looking for a creative agency to refresh our packaging and brand identity for a CPG launch",
+      "notes": "'Creative agency' lingo, brand identity work."
+    },
+    {
+      "id": "P7",
+      "split": "train",
+      "should_trigger": true,
+      "query": "my CMO wants me to find someone to run our quarterly demand-gen campaigns and own the funnel",
+      "notes": "HARD: indirect — never says 'agency', describes the work. Tests indirect-intent triggering."
+    },
+    {
+      "id": "P9",
+      "split": "train",
+      "should_trigger": true,
+      "query": "compare three social media agencies that have worked with Fortune 500 clients",
+      "notes": "Sub-service: SMM, quality signal."
+    },
+    {
+      "id": "P10",
+      "split": "train",
+      "should_trigger": true,
+      "query": "we need a video production studio for a 90-second product launch film, NYC or LA",
+      "notes": "Sub-service: video production, geographic."
+    },
+    {
+      "id": "P2",
+      "split": "validation",
+      "should_trigger": true,
+      "query": "we need a content marketing agency that's worked with fintech, NY area, mid-size",
+      "notes": "Sub-service: content marketing, vertical."
+    },
+    {
+      "id": "P5",
+      "split": "validation",
+      "should_trigger": true,
+      "query": "build a longlist of 30 mid-size full-service digital agencies in the Midwest",
+      "notes": "Geographic, scale, 'digital agency' term."
+    },
+    {
+      "id": "P6",
+      "split": "validation",
+      "should_trigger": true,
+      "query": "we shortlisted 8 marketing agency domains — pull contact info and confirm which serve B2B",
+      "notes": "BYO list (enrichment)."
+    },
+    {
+      "id": "P8",
+      "split": "validation",
+      "should_trigger": true,
+      "query": "find performance marketing agencies that work with DTC brands",
+      "notes": "Sub-service: performance marketing, vertical."
+    },
+    {
+      "id": "N1",
+      "split": "train",
+      "should_trigger": false,
+      "query": "find me an SEO agency in Texas",
+      "notes": "HARD: strictly SEO-only — should defer to find-seo-agency. The key sibling-coordination test."
+    },
+    {
+      "id": "N2",
+      "split": "train",
+      "should_trigger": false,
+      "query": "we need a web developer to build us a marketing-site replacement",
+      "notes": "HARD: strictly web-dev — should defer to find-web-developer. 'marketing-site' shares keyword overlap."
+    },
+    {
+      "id": "N3",
+      "split": "train",
+      "should_trigger": false,
+      "query": "I want to hire a marketing manager for our team",
+      "notes": "Recruiting an in-house marketing employee, not an agency."
+    },
+    {
+      "id": "N4",
+      "split": "train",
+      "should_trigger": false,
+      "query": "write me a marketing plan for launching a fitness app",
+      "notes": "Do-the-work, not find-a-firm-to-do-the-work."
+    },
+    {
+      "id": "N5",
+      "split": "train",
+      "should_trigger": false,
+      "query": "what's the best marketing automation tool — HubSpot vs Marketo vs Pardot?",
+      "notes": "Software product recommendation."
+    },
+    {
+      "id": "N9",
+      "split": "train",
+      "should_trigger": false,
+      "query": "I need a personal brand consultant for myself, just starting out as a coach",
+      "notes": "Consumer/personal-brand asks for an individual — not B2B procurement."
+    },
+    {
+      "id": "N6",
+      "split": "validation",
+      "should_trigger": false,
+      "query": "find me a marketing agency in London for a luxury brand",
+      "notes": "Non-US."
+    },
+    {
+      "id": "N7",
+      "split": "validation",
+      "should_trigger": false,
+      "query": "I'm looking for a freelance copywriter for a one-off blog post",
+      "notes": "Individual freelancer, one-off scope."
+    },
+    {
+      "id": "N8",
+      "split": "validation",
+      "should_trigger": false,
+      "query": "how big is the US digital marketing services market in 2025?",
+      "notes": "Industry research, not procurement."
+    },
+    {
+      "id": "N10",
+      "split": "validation",
+      "should_trigger": false,
+      "query": "what's the difference between SEO and SEM?",
+      "notes": "Generic conceptual question with marketing keywords but no procurement intent."
+    }
+  ]
+}
