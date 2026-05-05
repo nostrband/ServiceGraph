@@ -6,15 +6,15 @@
 
 > Stop scraping. Your agent's directory of US service firms is here.
 
-Agent Skills that drive the [**ServiceGraph API**](https://api.servicegraph.co)
-— a structured catalog of **100k+ US professional-services firms** (law,
-marketing, consulting, accounting, IT services, architecture, engineering, HR,
-PR, design) with filters for industry, services offered, location, size,
-ratings, and third-party listing presence.
+Agent Skills for [**ServiceGraph**](https://servicegraph.co) — a structured
+catalog of **100k+ US professional-services firms** (law, marketing,
+consulting, accounting, IT services, architecture, engineering, HR, PR,
+design) with filters for industry, services offered, location, size, ratings,
+and third-party listing presence.
 
-Each skill is a packaged set of instructions that teaches an AI agent how to
-walk the four-tier funnel — `tags` → `explore` → `search` → `get` — so it can
-shortlist and enrich firms without burning quota or scraping the web.
+<p align="center">
+  <img src="assets/servicegraph.png" alt="What you get for each firm — name, URL, phone, email, services, ratings, listings" width="800" />
+</p>
 
 Compatible with **19+ AI agents** including Claude Code, Codex, Cursor, GitHub
 Copilot, Gemini, Cline, Goose, Windsurf, and any other harness that supports
