@@ -1,0 +1,148 @@
+{
+  "version": "1",
+  "skill": "find-software-developer",
+  "split_strategy": "Manual. The hardest cases are sibling-industry boundaries (N1 web designer = design/marketing-agency territory, N2 AI/ML = data_ai_consulting industry) and indirect intent (P7 'technical partner'). Those go in train. Validation tests generalization across remaining sub-services and out-of-scope shapes.",
+  "passing_rule": "should_trigger=true → trigger_rate > 0.5 over 3 runs. should_trigger=false → trigger_rate ≤ 0.5.",
+  "queries": [
+    {
+      "id": "P1",
+      "split": "train",
+      "should_trigger": true,
+      "query": "find me a software dev shop in Austin for a custom B2B platform",
+      "notes": "Direct, location, vertical."
+    },
+    {
+      "id": "P3",
+      "split": "train",
+      "should_trigger": true,
+      "query": "we need a mobile app developer to ship our iOS app in Q1",
+      "notes": "Sub-service: mobile."
+    },
+    {
+      "id": "P4",
+      "split": "train",
+      "should_trigger": true,
+      "query": "looking for a DevOps consultancy to migrate us from on-prem to AWS",
+      "notes": "Sub-service: DevOps + cloud migration."
+    },
+    {
+      "id": "P7",
+      "split": "train",
+      "should_trigger": true,
+      "query": "we need a technical partner to build out our internal tooling, Northeast preferred",
+      "notes": "HARD: indirect — 'technical partner' not 'developer/firm/agency'. Tests indirect-intent triggering."
+    },
+    {
+      "id": "P9",
+      "split": "train",
+      "should_trigger": true,
+      "query": "compare three custom software firms with at least 4-star ratings and 50+ reviews",
+      "notes": "Quality threshold."
+    },
+    {
+      "id": "P10",
+      "split": "train",
+      "should_trigger": true,
+      "query": "looking for an API/backend team to extend our SaaS — Bay Area or remote-friendly",
+      "notes": "Sub-service: API/backend, location flexibility."
+    },
+    {
+      "id": "P2",
+      "split": "validation",
+      "should_trigger": true,
+      "query": "shortlist three custom-software firms with healthcare-industry experience",
+      "notes": "Direct, vertical."
+    },
+    {
+      "id": "P5",
+      "split": "validation",
+      "should_trigger": true,
+      "query": "build a longlist of 30 mid-size US dev shops that work with Python",
+      "notes": "Longlist scale, tech stack as keyword."
+    },
+    {
+      "id": "P6",
+      "split": "validation",
+      "should_trigger": true,
+      "query": "we shortlisted 10 dev firm domains — pull contact info and confirm which work with fintech",
+      "notes": "BYO list (enrichment). Uses the unambiguous procurement framing pattern."
+    },
+    {
+      "id": "P8",
+      "split": "validation",
+      "should_trigger": true,
+      "query": "find software houses that specialize in fintech and have SOC2 readiness",
+      "notes": "Vertical + cert."
+    },
+    {
+      "id": "N1",
+      "split": "train",
+      "should_trigger": false,
+      "query": "find me a web designer to refresh our landing page",
+      "notes": "HARD: web-design is design/marketing territory, not software dev. Should fire find-marketing-agency or future find-web-developer, not this skill."
+    },
+    {
+      "id": "N2",
+      "split": "train",
+      "should_trigger": false,
+      "query": "find an AI/ML consultancy to build our recommendation engine",
+      "notes": "HARD: AI/ML lives in industry:data_ai_consulting, not it_services. Different skill territory."
+    },
+    {
+      "id": "N3",
+      "split": "train",
+      "should_trigger": false,
+      "query": "I want to hire a senior backend engineer for our team",
+      "notes": "Recruiting an in-house employee, not procuring a firm."
+    },
+    {
+      "id": "N4",
+      "split": "train",
+      "should_trigger": false,
+      "query": "help me debug this React component that's not rendering",
+      "notes": "DIY/code task."
+    },
+    {
+      "id": "N5",
+      "split": "train",
+      "should_trigger": false,
+      "query": "what's the best cloud provider — AWS vs GCP vs Azure?",
+      "notes": "Software-product comparison, not procurement."
+    },
+    {
+      "id": "N7",
+      "split": "train",
+      "should_trigger": false,
+      "query": "I'm looking for a freelance developer for a one-off integration",
+      "notes": "Individual freelancer, one-off scope."
+    },
+    {
+      "id": "N6",
+      "split": "validation",
+      "should_trigger": false,
+      "query": "find a software firm in Bangalore for an offshore dev team",
+      "notes": "Non-US (offshore)."
+    },
+    {
+      "id": "N8",
+      "split": "validation",
+      "should_trigger": false,
+      "query": "explain how Kubernetes ingress works",
+      "notes": "Knowledge question, no procurement intent."
+    },
+    {
+      "id": "N9",
+      "split": "validation",
+      "should_trigger": false,
+      "query": "review this Python package and tell me if it's secure",
+      "notes": "Code review task with software-dev keyword overlap."
+    },
+    {
+      "id": "N10",
+      "split": "validation",
+      "should_trigger": false,
+      "query": "what's the typical hourly rate for a custom software developer?",
+      "notes": "Market research question, not a firm shortlist ask."
+    }
+  ]
+}
