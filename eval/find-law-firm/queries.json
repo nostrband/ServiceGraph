@@ -1,0 +1,148 @@
+{
+  "version": "1",
+  "skill": "find-law-firm",
+  "split_strategy": "Manual. The dominant failure mode is consumer-personal asks (divorce, PI, criminal defense, estate planning) that share the strong 'lawyer/attorney' pattern with B2B procurement positives. Three of the four consumer-trap negatives are in train (N1 divorce, N2 PI, N6 criminal) for iteration signal; one (N10 estate planning) is held out for generalization. Indirect-intent positives (P7 'outside counsel' for compliance, P10 'cap table review') are also in train.",
+  "passing_rule": "should_trigger=true → trigger_rate > 0.5 over 3 runs. should_trigger=false → trigger_rate ≤ 0.5.",
+  "queries": [
+    {
+      "id": "P1",
+      "split": "train",
+      "should_trigger": true,
+      "query": "find me three boutique IP law firms in California that handle patent prosecution for hardware startups",
+      "notes": "Direct, sub-area (IP), location, vertical."
+    },
+    {
+      "id": "P2",
+      "split": "train",
+      "should_trigger": true,
+      "query": "shortlist M&A counsel for a Series-B fundraise — top firms in NY",
+      "notes": "M&A sub-area, fundraising context."
+    },
+    {
+      "id": "P3",
+      "split": "train",
+      "should_trigger": true,
+      "query": "we need patent prosecution help for our hardware startup, mid-size firm",
+      "notes": "IP sub-area, size constraint."
+    },
+    {
+      "id": "P7",
+      "split": "train",
+      "should_trigger": true,
+      "query": "our compliance is getting complex — we need outside counsel for GDPR, CCPA, and SOC2 oversight",
+      "notes": "HARD: indirect — 'outside counsel' framing, regulatory practice area."
+    },
+    {
+      "id": "P10",
+      "split": "train",
+      "should_trigger": true,
+      "query": "we need a law firm to review our cap table and Series-B docs",
+      "notes": "HARD: indirect — describes the work ('review our cap table'), not the practice area."
+    },
+    {
+      "id": "P9",
+      "split": "train",
+      "should_trigger": true,
+      "query": "compare three commercial litigation firms in Texas with at least 4-star ratings",
+      "notes": "Litigation sub-area, quality threshold."
+    },
+    {
+      "id": "P4",
+      "split": "validation",
+      "should_trigger": true,
+      "query": "looking for a corporate law firm to handle our LLC formation and shareholder agreements",
+      "notes": "Corporate-law sub-area."
+    },
+    {
+      "id": "P5",
+      "split": "validation",
+      "should_trigger": true,
+      "query": "build a longlist of 30 mid-size US firms specializing in employment law for tech companies",
+      "notes": "Employment-law, vertical, longlist scale."
+    },
+    {
+      "id": "P6",
+      "split": "validation",
+      "should_trigger": true,
+      "query": "we shortlisted 10 law firm domains — pull contact info and confirm which handle SaaS contracts",
+      "notes": "BYO list (enrichment) with vertical filter."
+    },
+    {
+      "id": "P8",
+      "split": "validation",
+      "should_trigger": true,
+      "query": "find boutique securities law firms experienced with IPOs",
+      "notes": "Securities sub-area, IPO context."
+    },
+    {
+      "id": "N1",
+      "split": "train",
+      "should_trigger": false,
+      "query": "I need a divorce lawyer in Chicago for personal matters",
+      "notes": "HARD: consumer-personal. Catalog is B2B-only."
+    },
+    {
+      "id": "N2",
+      "split": "train",
+      "should_trigger": false,
+      "query": "find me a personal injury attorney near me",
+      "notes": "HARD: consumer-personal. PI is heavily B2C."
+    },
+    {
+      "id": "N3",
+      "split": "train",
+      "should_trigger": false,
+      "query": "I want to hire an in-house General Counsel for our company",
+      "notes": "Recruiting an employee, not procuring a firm."
+    },
+    {
+      "id": "N4",
+      "split": "train",
+      "should_trigger": false,
+      "query": "is this NDA enforceable in California?",
+      "notes": "DIY legal question, not procurement."
+    },
+    {
+      "id": "N5",
+      "split": "train",
+      "should_trigger": false,
+      "query": "what's the best contract management software — Ironclad vs DocuSign?",
+      "notes": "Software-product comparison."
+    },
+    {
+      "id": "N6",
+      "split": "train",
+      "should_trigger": false,
+      "query": "find me a criminal defense attorney for my brother",
+      "notes": "HARD: consumer-personal."
+    },
+    {
+      "id": "N7",
+      "split": "validation",
+      "should_trigger": false,
+      "query": "I'm looking for a freelance contract reviewer for one-off contracts",
+      "notes": "Individual freelancer, one-off scope."
+    },
+    {
+      "id": "N8",
+      "split": "validation",
+      "should_trigger": false,
+      "query": "explain how copyright fair use works",
+      "notes": "Knowledge question, no procurement intent."
+    },
+    {
+      "id": "N9",
+      "split": "validation",
+      "should_trigger": false,
+      "query": "find me a UK law firm for our European entity setup",
+      "notes": "Non-US."
+    },
+    {
+      "id": "N10",
+      "split": "validation",
+      "should_trigger": false,
+      "query": "I need an estate planning attorney to draft my will",
+      "notes": "HARD: consumer-personal. Held out from train to test generalization on the consumer-trap pattern."
+    }
+  ]
+}
