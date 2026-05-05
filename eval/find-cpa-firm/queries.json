@@ -1,0 +1,28 @@
+{
+  "version": "1",
+  "skill": "find-cpa-firm",
+  "split_strategy": "Manual. Dominant failure mode is consumer/personal tax asks (1040 prep, IRA, freelance bookkeeping) sharing keyword overlap with B2B accounting. Three of the four consumer-traps in train (N1 personal 1040, N2 freelance bookkeeping, N5 Roth knowledge); one (N10 home-office DIY tax) held out for generalization.",
+  "passing_rule": "should_trigger=true → trigger_rate > 0.5 over 3 runs. should_trigger=false → trigger_rate ≤ 0.5.",
+  "queries": [
+    {"id": "P1", "split": "train", "should_trigger": true, "query": "find me a CPA firm for our delaware c-corp series A audit, recommend 5 options under 50 ppl", "notes": "Direct, B2B audit context."},
+    {"id": "P2", "split": "train", "should_trigger": true, "query": "shortlist three audit firms with SaaS experience for our annual review", "notes": "Audit sub-area + vertical."},
+    {"id": "P4", "split": "train", "should_trigger": true, "query": "looking for a fractional CFO to help us through a Series-A close", "notes": "Advisory sub-area."},
+    {"id": "P7", "split": "train", "should_trigger": true, "query": "our books are a mess and we need someone to clean them up before the audit", "notes": "HARD: indirect — describes work, doesn't say 'CPA' or 'accounting firm'."},
+    {"id": "P9", "split": "train", "should_trigger": true, "query": "compare three CPA firms in NY with at least 4-star ratings and Big-4 alumni", "notes": "Quality threshold + pedigree."},
+    {"id": "P10", "split": "train", "should_trigger": true, "query": "we need an outside accountant to handle our state and local tax filings — multi-state DTC business", "notes": "INDIRECT-ish — 'outside accountant', SALT specialty."},
+    {"id": "P3", "split": "validation", "should_trigger": true, "query": "we need a tax advisor for our M&A — Series-B-stage tech company", "notes": "M&A tax sub-area."},
+    {"id": "P5", "split": "validation", "should_trigger": true, "query": "build a longlist of 25 US accounting firms specializing in R&D tax credits for biotech", "notes": "R&D credits sub-area + vertical."},
+    {"id": "P6", "split": "validation", "should_trigger": true, "query": "we shortlisted 10 accounting firm domains — pull contact info and confirm which serve venture-backed startups", "notes": "BYO list (enrichment)."},
+    {"id": "P8", "split": "validation", "should_trigger": true, "query": "find firms experienced with 409A valuations and equity compensation", "notes": "409A sub-area."},
+    {"id": "N1", "split": "train", "should_trigger": false, "query": "I need someone to file my personal 1040 — got married this year", "notes": "HARD: consumer-personal tax. Catalog is B2B-only."},
+    {"id": "N2", "split": "train", "should_trigger": false, "query": "find me a bookkeeper to help with my freelance income", "notes": "HARD: individual freelancer's personal bookkeeping."},
+    {"id": "N3", "split": "train", "should_trigger": false, "query": "I want to hire an in-house Controller for our team", "notes": "Recruiting an employee."},
+    {"id": "N4", "split": "train", "should_trigger": false, "query": "what's the best accounting software — QuickBooks vs Xero vs FreshBooks?", "notes": "Software-product comparison."},
+    {"id": "N5", "split": "train", "should_trigger": false, "query": "explain how the Roth IRA conversion ladder works", "notes": "HARD: personal-finance knowledge question."},
+    {"id": "N9", "split": "train", "should_trigger": false, "query": "help me debug this Python script that calculates depreciation", "notes": "Code task with accounting keyword overlap."},
+    {"id": "N6", "split": "validation", "should_trigger": false, "query": "find me a tax preparer in London for our UK entity", "notes": "Non-US."},
+    {"id": "N7", "split": "validation", "should_trigger": false, "query": "I'm looking for a freelance accountant for one-off bookkeeping", "notes": "Individual freelancer."},
+    {"id": "N8", "split": "validation", "should_trigger": false, "query": "what's the typical hourly rate for an audit?", "notes": "Market research, not procurement."},
+    {"id": "N10", "split": "validation", "should_trigger": false, "query": "how do I claim the home office deduction?", "notes": "HARD: DIY personal-tax question. Held out for generalization."}
+  ]
+}
