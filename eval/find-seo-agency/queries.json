@@ -1,0 +1,148 @@
+{
+  "version": "1",
+  "skill": "find-seo-agency",
+  "split_strategy": "Manual. The new failure modes vs find-marketing-agency are sibling-coordination going UPSTREAM (N1 broader marketing → defer to find-marketing-agency, N2 PPC/paid-search → not SEO) and indirect SEO intent (P7 'organic traffic flat', P10 'improve Google rankings'). Those go in train. Validation tests generalization across remaining sub-flavors and out-of-scope shapes.",
+  "passing_rule": "should_trigger=true → trigger_rate > 0.5 over 3 runs. should_trigger=false → trigger_rate ≤ 0.5.",
+  "queries": [
+    {
+      "id": "P1",
+      "split": "train",
+      "should_trigger": true,
+      "query": "find me an SEO agency in Texas",
+      "notes": "Direct, location. Mirror of N1 in find-marketing-agency — must fire here, must NOT fire there."
+    },
+    {
+      "id": "P3",
+      "split": "train",
+      "should_trigger": true,
+      "query": "we need help with link-building and on-page SEO for our ecommerce store",
+      "notes": "Multiple SEO sub-flavors + ecommerce vertical."
+    },
+    {
+      "id": "P4",
+      "split": "train",
+      "should_trigger": true,
+      "query": "looking for a local SEO agency to help our dental practice rank in Brooklyn",
+      "notes": "Local SEO sub-flavor; dental practice is the CLIENT (B2B procurement, not consumer dental care)."
+    },
+    {
+      "id": "P7",
+      "split": "train",
+      "should_trigger": true,
+      "query": "our organic traffic has been flat for 6 months — we need an SEO partner",
+      "notes": "HARD: indirect — 'organic traffic' instead of 'agency'. Tests SEO-outcome-language triggering."
+    },
+    {
+      "id": "P9",
+      "split": "train",
+      "should_trigger": true,
+      "query": "find SEO consultants who specialize in fixing technical issues like Core Web Vitals",
+      "notes": "Technical SEO sub-niche."
+    },
+    {
+      "id": "P10",
+      "split": "train",
+      "should_trigger": true,
+      "query": "we want to improve our Google rankings for medical-device queries — who should we hire?",
+      "notes": "HARD: indirect — 'Google rankings' framing, named vertical."
+    },
+    {
+      "id": "P2",
+      "split": "validation",
+      "should_trigger": true,
+      "query": "shortlist three technical SEO consultancies for a B2B SaaS company",
+      "notes": "Sub-type: technical SEO + vertical."
+    },
+    {
+      "id": "P5",
+      "split": "validation",
+      "should_trigger": true,
+      "query": "build a longlist of 25 mid-size SEO agencies in the US that focus on enterprise clients",
+      "notes": "Longlist scale, enterprise vertical."
+    },
+    {
+      "id": "P6",
+      "split": "validation",
+      "should_trigger": true,
+      "query": "we shortlisted 8 SEO firm domains — pull contact info and confirm which work with B2B SaaS",
+      "notes": "BYO list (enrichment). Original wording was ambiguous between procurement and sales lead-gen ('do outreach'); reworded to mirror find-marketing-agency P6 with explicit 'we shortlisted' framing."
+    },
+    {
+      "id": "P8",
+      "split": "validation",
+      "should_trigger": true,
+      "query": "compare three SEO agencies that work with Shopify stores, with at least 4-star ratings",
+      "notes": "Quality + platform vertical."
+    },
+    {
+      "id": "N1",
+      "split": "train",
+      "should_trigger": false,
+      "query": "find me a full-service marketing agency in California",
+      "notes": "HARD: broader scope — should defer to find-marketing-agency. Sibling-defer going UPSTREAM."
+    },
+    {
+      "id": "N2",
+      "split": "train",
+      "should_trigger": false,
+      "query": "we need a PPC agency to manage our Google Ads spend",
+      "notes": "HARD: paid search, not SEO. SEM/PPC defers to find-marketing-agency. Frequent terminology mix-up."
+    },
+    {
+      "id": "N3",
+      "split": "train",
+      "should_trigger": false,
+      "query": "what's the best SEO tool for a small business — Ahrefs or Semrush?",
+      "notes": "Software-tool recommendation, not firm directory."
+    },
+    {
+      "id": "N4",
+      "split": "train",
+      "should_trigger": false,
+      "query": "how do I rank #1 on Google for 'best CRM software'?",
+      "notes": "DIY/do-the-work, not procurement."
+    },
+    {
+      "id": "N5",
+      "split": "train",
+      "should_trigger": false,
+      "query": "I want to hire an in-house SEO manager for my team",
+      "notes": "Recruiting an employee, not an agency."
+    },
+    {
+      "id": "N9",
+      "split": "train",
+      "should_trigger": false,
+      "query": "explain how Google's algorithm works",
+      "notes": "Knowledge question, no procurement intent."
+    },
+    {
+      "id": "N6",
+      "split": "validation",
+      "should_trigger": false,
+      "query": "find me an SEO agency in Berlin for our European launch",
+      "notes": "Non-US."
+    },
+    {
+      "id": "N7",
+      "split": "validation",
+      "should_trigger": false,
+      "query": "what's the difference between SEO and SEM?",
+      "notes": "Generic conceptual question."
+    },
+    {
+      "id": "N8",
+      "split": "validation",
+      "should_trigger": false,
+      "query": "I'm looking for a freelance SEO writer to do 5 blog posts",
+      "notes": "Individual freelancer, one-off scope."
+    },
+    {
+      "id": "N10",
+      "split": "validation",
+      "should_trigger": false,
+      "query": "review this Python script that scrapes SERPs",
+      "notes": "Code task with SEO keyword overlap."
+    }
+  ]
+}
