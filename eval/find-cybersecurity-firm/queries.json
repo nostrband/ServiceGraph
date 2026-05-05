@@ -1,0 +1,28 @@
+{
+  "version": "1",
+  "skill": "find-cybersecurity-firm",
+  "split_strategy": "Manual. Hard cases are consumer-personal cybersecurity (N3 'Gmail got hacked', N10 'home wifi') sharing strong 'security/hacked' keyword overlap with B2B positives, EDR product comparison (N2), and the indirect 'we got breached' urgent-IR positive (P7).",
+  "passing_rule": "should_trigger=true → trigger_rate > 0.5 over 3 runs. should_trigger=false → trigger_rate ≤ 0.5.",
+  "queries": [
+    {"id": "P1", "split": "train", "should_trigger": true, "query": "find me a pen-testing firm for our SOC 2 audit", "notes": "Direct, sub-type (pen-test) + compliance context."},
+    {"id": "P2", "split": "train", "should_trigger": true, "query": "shortlist three vCISO services for our healthcare-tech startup", "notes": "vCISO sub-type + vertical."},
+    {"id": "P3", "split": "train", "should_trigger": true, "query": "we need an incident response retainer in case we get breached", "notes": "IR retainer engagement."},
+    {"id": "P7", "split": "train", "should_trigger": true, "query": "we got hit with a ransomware attack last week — we need help fast", "notes": "HARD: indirect — 'we got hit', urgent IR. Tests breach-language triggering."},
+    {"id": "P9", "split": "train", "should_trigger": true, "query": "compare three pen-testing firms with at least 4-star ratings and PCI-DSS experience", "notes": "Quality + compliance framework."},
+    {"id": "P10", "split": "train", "should_trigger": true, "query": "we need a SOC-2 readiness partner ahead of our enterprise sales push", "notes": "SOC 2 readiness sub-type + business context."},
+    {"id": "P4", "split": "validation", "should_trigger": true, "query": "looking for a cloud security consultancy familiar with AWS and HIPAA", "notes": "Cloud security + healthcare compliance."},
+    {"id": "P5", "split": "validation", "should_trigger": true, "query": "build a longlist of 20 US cybersecurity firms specializing in fintech compliance", "notes": "Longlist scale + vertical."},
+    {"id": "P6", "split": "validation", "should_trigger": true, "query": "we shortlisted 8 security firm domains — pull contact info and confirm which do red team", "notes": "BYO list (enrichment) with sub-type filter."},
+    {"id": "P8", "split": "validation", "should_trigger": true, "query": "find application security firms experienced with code review and SAST", "notes": "AppSec sub-type."},
+    {"id": "N1", "split": "train", "should_trigger": false, "query": "I want to hire an in-house Security Engineer for our team", "notes": "Recruiting an employee."},
+    {"id": "N2", "split": "train", "should_trigger": false, "query": "what's the best EDR — CrowdStrike vs SentinelOne vs Defender?", "notes": "HARD: software-product comparison with cybersecurity vendor names."},
+    {"id": "N3", "split": "train", "should_trigger": false, "query": "my Gmail got hacked, what should I do?", "notes": "HARD: consumer-personal incident, not B2B procurement."},
+    {"id": "N4", "split": "train", "should_trigger": false, "query": "explain how zero-trust architecture works", "notes": "Knowledge / framework question."},
+    {"id": "N6", "split": "train", "should_trigger": false, "query": "I'm looking for a freelance bug-bounty hunter for a one-off engagement", "notes": "Individual freelancer / bug bounty."},
+    {"id": "N8", "split": "train", "should_trigger": false, "query": "help me configure my firewall rules for OpenVPN", "notes": "DIY/config task."},
+    {"id": "N5", "split": "validation", "should_trigger": false, "query": "find me a security firm in Tel Aviv for our Israeli office", "notes": "Non-US."},
+    {"id": "N7", "split": "validation", "should_trigger": false, "query": "what's the typical cost of a SOC 2 Type II audit?", "notes": "Market research."},
+    {"id": "N9", "split": "validation", "should_trigger": false, "query": "review this nginx config for security issues", "notes": "Code-review task with security keyword overlap."},
+    {"id": "N10", "split": "validation", "should_trigger": false, "query": "how do I secure my home wifi?", "notes": "HARD: consumer-personal. Held out for generalization on the consumer-trap pattern."}
+  ]
+}
