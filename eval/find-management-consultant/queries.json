@@ -1,0 +1,28 @@
+{
+  "version": "1",
+  "skill": "find-management-consultant",
+  "split_strategy": "Manual. Hard cases are 'help me do strategy' DIY misfires (N2), in-house CSO recruiting (N1), individual life/career coaching (N3 — keyword overlap with executive-coaching), and the indirect 'cross-functional execution help' positive (P7).",
+  "passing_rule": "should_trigger=true → trigger_rate > 0.5 over 3 runs. should_trigger=false → trigger_rate ≤ 0.5.",
+  "queries": [
+    {"id": "P1", "split": "train", "should_trigger": true, "query": "find me three top strategy consultancies in California for a Series-B SaaS", "notes": "Direct, sub-service (strategy), location, vertical."},
+    {"id": "P2", "split": "train", "should_trigger": true, "query": "shortlist boutique operations consulting firms with healthcare experience", "notes": "Operations sub-service + vertical."},
+    {"id": "P3", "split": "train", "should_trigger": true, "query": "we need an executive coach for our new CEO", "notes": "Executive coaching for a B2B context (firm hires for their CEO)."},
+    {"id": "P7", "split": "train", "should_trigger": true, "query": "our team is struggling with cross-functional execution — we need help", "notes": "HARD: indirect — describes pain, never says 'consultant' or 'agency'."},
+    {"id": "P9", "split": "train", "should_trigger": true, "query": "compare three management consulting firms with at least 4-star ratings and Big-3 alumni", "notes": "Quality threshold + pedigree."},
+    {"id": "P10", "split": "train", "should_trigger": true, "query": "we need fractional COO support for the next 6 months", "notes": "Fractional / interim ops leadership."},
+    {"id": "P4", "split": "validation", "should_trigger": true, "query": "looking for change-management partners for a post-merger integration", "notes": "Org-development sub-service + M&A context."},
+    {"id": "P5", "split": "validation", "should_trigger": true, "query": "build a longlist of 25 US management consultancies that work with PE portfolio companies", "notes": "Longlist scale + PE vertical."},
+    {"id": "P6", "split": "validation", "should_trigger": true, "query": "we shortlisted 10 consulting firm domains — pull contact info and confirm which do strategy + ops", "notes": "BYO list (enrichment)."},
+    {"id": "P8", "split": "validation", "should_trigger": true, "query": "find sales-ops consultancies with revenue-operations expertise", "notes": "Sales/revenue-ops sub-service."},
+    {"id": "N1", "split": "train", "should_trigger": false, "query": "I want to hire an in-house Chief Strategy Officer", "notes": "Recruiting an employee."},
+    {"id": "N2", "split": "train", "should_trigger": false, "query": "help me build a 5-year growth strategy for my coaching business", "notes": "HARD: do-the-work, not procurement. Strong 'strategy' keyword overlap."},
+    {"id": "N3", "split": "train", "should_trigger": false, "query": "find me a life coach to help me with career direction", "notes": "HARD: consumer/personal coaching. Keyword overlap with executive-coaching tag."},
+    {"id": "N4", "split": "train", "should_trigger": false, "query": "what's the difference between Lean and Six Sigma?", "notes": "Knowledge / framework question."},
+    {"id": "N5", "split": "train", "should_trigger": false, "query": "find me a strategy consultancy in Berlin for our European operations", "notes": "Non-US."},
+    {"id": "N10", "split": "train", "should_trigger": false, "query": "review this PowerPoint deck for our board meeting", "notes": "Do-the-work / review task."},
+    {"id": "N6", "split": "validation", "should_trigger": false, "query": "I'm looking for a freelance strategy consultant for a 2-week project", "notes": "Individual freelancer."},
+    {"id": "N7", "split": "validation", "should_trigger": false, "query": "what's the typical day rate for a McKinsey alum?", "notes": "Market research."},
+    {"id": "N8", "split": "validation", "should_trigger": false, "query": "explain how Porter's Five Forces works", "notes": "Framework knowledge question."},
+    {"id": "N9", "split": "validation", "should_trigger": false, "query": "I'm thinking about getting an MBA — which programs are best?", "notes": "Academic/career-question, not procurement."}
+  ]
+}
