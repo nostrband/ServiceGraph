@@ -1,0 +1,28 @@
+{
+  "version": "1",
+  "skill": "find-pr-agency",
+  "split_strategy": "Manual. Hard cases are the sibling defer to find-marketing-agency for full-service scope (N1), DIY 'write me a press release' (N3, strong PR-keyword overlap), influencer marketplace asks (N8 — adjacent but different category), and the indirect 'we need press' positive (P7).",
+  "passing_rule": "should_trigger=true → trigger_rate > 0.5 over 3 runs. should_trigger=false → trigger_rate ≤ 0.5.",
+  "queries": [
+    {"id": "P1", "split": "train", "should_trigger": true, "query": "find me a tech PR agency in NY for our Series-B announcement", "notes": "Direct, sub-type (tech PR) + location."},
+    {"id": "P2", "split": "train", "should_trigger": true, "query": "shortlist three IR firms for our upcoming IPO roadshow", "notes": "IR sub-type + IPO context."},
+    {"id": "P3", "split": "train", "should_trigger": true, "query": "we need crisis comms help — brand reputation issue blowing up online", "notes": "Crisis comms sub-type, urgent."},
+    {"id": "P7", "split": "train", "should_trigger": true, "query": "we need press for our Series-B — get us into TechCrunch, WSJ, and the trade press", "notes": "HARD: indirect — 'we need press', no 'PR agency' / 'firm'. Tests outcome-language triggering."},
+    {"id": "P9", "split": "train", "should_trigger": true, "query": "compare three PR agencies with at least 4-star ratings and Fortune 500 clients", "notes": "Quality + client tier."},
+    {"id": "P10", "split": "train", "should_trigger": true, "query": "we need investor relations support for our quarterly earnings cycle", "notes": "IR sub-type, ongoing engagement."},
+    {"id": "P4", "split": "validation", "should_trigger": true, "query": "looking for a healthcare PR agency familiar with FDA regulatory comms", "notes": "Healthcare PR + regulatory niche."},
+    {"id": "P5", "split": "validation", "should_trigger": true, "query": "build a longlist of 20 mid-size US PR agencies focused on B2B SaaS", "notes": "Longlist scale + vertical."},
+    {"id": "P6", "split": "validation", "should_trigger": true, "query": "we shortlisted 10 PR firm domains — pull contact info and confirm which do tech launches", "notes": "BYO list (enrichment)."},
+    {"id": "P8", "split": "validation", "should_trigger": true, "query": "find public affairs firms with state-government experience in California", "notes": "Public affairs sub-type + state-gov vertical."},
+    {"id": "N1", "split": "train", "should_trigger": false, "query": "find me a marketing agency to handle our brand and demand-gen", "notes": "HARD: broader marketing scope — defer to find-marketing-agency."},
+    {"id": "N2", "split": "train", "should_trigger": false, "query": "I want to hire an in-house Head of Communications", "notes": "Recruiting an employee."},
+    {"id": "N3", "split": "train", "should_trigger": false, "query": "write me a press release for our product launch", "notes": "HARD: DIY/do-the-work with strong PR keyword overlap."},
+    {"id": "N4", "split": "train", "should_trigger": false, "query": "what's the best PR software — Cision vs Muck Rack vs Prowly?", "notes": "Software-product comparison."},
+    {"id": "N6", "split": "train", "should_trigger": false, "query": "I'm looking for a freelance PR consultant for a one-off announcement", "notes": "Individual freelancer."},
+    {"id": "N8", "split": "train", "should_trigger": false, "query": "find me an influencer to promote our DTC product", "notes": "HARD: influencer marketplace, not PR. Adjacent category."},
+    {"id": "N5", "split": "validation", "should_trigger": false, "query": "find me a PR agency in London for our UK launch", "notes": "Non-US."},
+    {"id": "N7", "split": "validation", "should_trigger": false, "query": "what's the typical retainer for a tech PR agency?", "notes": "Market research."},
+    {"id": "N9", "split": "validation", "should_trigger": false, "query": "help me draft talking points for an interview", "notes": "DIY/do-the-work."},
+    {"id": "N10", "split": "validation", "should_trigger": false, "query": "explain how earned media works", "notes": "Knowledge question."}
+  ]
+}
