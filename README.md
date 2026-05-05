@@ -105,6 +105,60 @@ to first-class coverage — `find-web-developer`, `find-law-firm`,
 Until they ship, the umbrella `find-service-providers` skill handles every
 industry through the same DSL.
 
+## Prefer MCP? Use the hosted server.
+
+If your harness speaks the [Model Context Protocol](https://modelcontextprotocol.io/),
+skip the skill install and point it at the hosted MCP server:
+
+```
+https://mcp.servicegraph.co
+```
+
+- **Transport:** Streamable HTTP
+- **Auth:** OAuth 2.1 + PKCE with Dynamic Client Registration — your
+  harness opens a browser tab on first use; the user enters their email +
+  one-time code on `api.servicegraph.co` and is bounced back. No client
+  ID or secret to copy around.
+
+### Claude Code
+
+```bash
+claude mcp add --transport http servicegraph https://mcp.servicegraph.co
+```
+
+### Claude Desktop
+
+**Settings → Connectors → Add custom connector**, then paste:
+
+```
+https://mcp.servicegraph.co
+```
+
+The OAuth handshake runs in your browser on first use.
+
+### Codex CLI
+
+`~/.codex/config.toml`:
+
+```toml
+[mcp_servers.servicegraph]
+url = "https://mcp.servicegraph.co"
+```
+
+### Cursor and other JSON-config clients
+
+`.cursor/mcp.json` (or the equivalent for your harness):
+
+```json
+{
+  "mcpServers": {
+    "servicegraph": {
+      "url": "https://mcp.servicegraph.co"
+    }
+  }
+}
+```
+
 ## Usage
 
 Skills are automatically available once installed. The agent will pick the
