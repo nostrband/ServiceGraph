@@ -1,0 +1,148 @@
+{
+  "version": "1",
+  "skill": "find-web-developer",
+  "split_strategy": "Manual. Hard cases are bidirectional sibling deferrals — N1 (custom internal CRM → find-software-developer), N2 (mobile app → find-software-developer), N9 (full marketing scope → find-marketing-agency) — and the indirect intent positive P7 ('redesign and rebuild' without naming an agency type). Those go in train. Validation tests generalization across remaining platforms and out-of-scope shapes.",
+  "passing_rule": "should_trigger=true → trigger_rate > 0.5 over 3 runs. should_trigger=false → trigger_rate ≤ 0.5.",
+  "queries": [
+    {
+      "id": "P1",
+      "split": "train",
+      "should_trigger": true,
+      "query": "find me a web developer to build our marketing landing page",
+      "notes": "Direct, simple."
+    },
+    {
+      "id": "P3",
+      "split": "train",
+      "should_trigger": true,
+      "query": "we need to rebuild our ecommerce site on Shopify with custom theme work",
+      "notes": "Shopify ecommerce rebuild."
+    },
+    {
+      "id": "P4",
+      "split": "train",
+      "should_trigger": true,
+      "query": "looking for a WordPress dev shop to maintain and refresh our company site",
+      "notes": "WordPress maintenance + refresh."
+    },
+    {
+      "id": "P7",
+      "split": "train",
+      "should_trigger": true,
+      "query": "our site is dated and slow — we need someone to redesign and rebuild it",
+      "notes": "HARD: indirect — never says 'developer' or 'agency'. Tests describing-the-work triggering."
+    },
+    {
+      "id": "P9",
+      "split": "train",
+      "should_trigger": true,
+      "query": "compare three web development studios with at least 4-star ratings and Shopify Plus experience",
+      "notes": "Quality threshold + platform vertical."
+    },
+    {
+      "id": "P10",
+      "split": "train",
+      "should_trigger": true,
+      "query": "we need a microsite built for a product launch — small, polished, two pages",
+      "notes": "Microsite — clearly web-dev scope."
+    },
+    {
+      "id": "P2",
+      "split": "validation",
+      "should_trigger": true,
+      "query": "shortlist three Webflow agencies in California for our marketing site",
+      "notes": "Platform: Webflow + location."
+    },
+    {
+      "id": "P5",
+      "split": "validation",
+      "should_trigger": true,
+      "query": "build a longlist of 25 web design and development firms in NY focused on B2B",
+      "notes": "Longlist + vertical."
+    },
+    {
+      "id": "P6",
+      "split": "validation",
+      "should_trigger": true,
+      "query": "we shortlisted 8 web dev shop domains — pull contact info and confirm which do Webflow",
+      "notes": "BYO list (enrichment) with platform filter."
+    },
+    {
+      "id": "P8",
+      "split": "validation",
+      "should_trigger": true,
+      "query": "find headless CMS implementation specialists for our Next.js site",
+      "notes": "Sub-niche: headless CMS + Next.js."
+    },
+    {
+      "id": "N1",
+      "split": "train",
+      "should_trigger": false,
+      "query": "find me a custom software firm to build our internal CRM",
+      "notes": "HARD: internal tool — defer to find-software-developer. Tests sibling-defer downstream to software."
+    },
+    {
+      "id": "N2",
+      "split": "train",
+      "should_trigger": false,
+      "query": "we need a mobile app developer for an iOS+Android launch",
+      "notes": "HARD: mobile is software-dev territory — defer to find-software-developer."
+    },
+    {
+      "id": "N3",
+      "split": "train",
+      "should_trigger": false,
+      "query": "help me debug this CSS issue with my landing page",
+      "notes": "DIY/code task with web keyword overlap."
+    },
+    {
+      "id": "N4",
+      "split": "train",
+      "should_trigger": false,
+      "query": "I want to hire an in-house web developer",
+      "notes": "Recruiting an employee, not procuring a firm."
+    },
+    {
+      "id": "N5",
+      "split": "train",
+      "should_trigger": false,
+      "query": "what's the best CMS — WordPress vs Webflow vs Squarespace?",
+      "notes": "Software-product comparison."
+    },
+    {
+      "id": "N9",
+      "split": "train",
+      "should_trigger": false,
+      "query": "find me a marketing agency to do our entire digital strategy and execution",
+      "notes": "HARD: broader marketing scope — defer to find-marketing-agency."
+    },
+    {
+      "id": "N6",
+      "split": "validation",
+      "should_trigger": false,
+      "query": "find a web developer in Manila for our offshore team",
+      "notes": "Non-US (offshore)."
+    },
+    {
+      "id": "N7",
+      "split": "validation",
+      "should_trigger": false,
+      "query": "I'm looking for a freelance Webflow specialist for a one-off project",
+      "notes": "Individual freelancer, one-off scope."
+    },
+    {
+      "id": "N8",
+      "split": "validation",
+      "should_trigger": false,
+      "query": "what's the typical cost of a website redesign?",
+      "notes": "Market research, not procurement."
+    },
+    {
+      "id": "N10",
+      "split": "validation",
+      "should_trigger": false,
+      "query": "explain how DNS records work",
+      "notes": "Knowledge question, no procurement intent."
+    }
+  ]
+}
