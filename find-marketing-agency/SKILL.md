@@ -5,7 +5,7 @@ license: MIT
 metadata:
   api_base: https://api.servicegraph.co
   industry: marketing_agency
-  version: "0.1"
+  version: "0.2"
 ---
 
 # find-marketing-agency
@@ -13,8 +13,13 @@ metadata:
 Drive the **ServiceGraph API** (`https://api.servicegraph.co`) to find,
 shortlist, and enrich US marketing agencies. The catalog has tens of
 thousands of US marketing firms tagged across 26 service sub-tags
-(branding, content-marketing, ppc, smm, email-marketing, web-design,
-video-production, performance-marketing, demand-gen, etc.).
+including branding, content-marketing, ppc, smm, email-marketing,
+web-design, video-production, inbound-marketing, marketing-strategy,
+and conversion-optimization. (Note: the catalog has no
+`performance-marketing` or `demand-gen` / `demand-generation` tag —
+those user-phrasings map to `inbound-marketing` /
+`marketing-strategy` / `conversion-optimization` plus a keyword
+fallback.)
 
 **Always pin `industry:marketing_agency` in the filter.** This skill
 exists to do that automatically — the user shouldn't have to think
@@ -62,9 +67,14 @@ GET https://api.servicegraph.co/v1/tags?include_values=1
 
 Cache the response for the conversation. Confirm the marketing-relevant
 service tags exist in the returned `service_provided` taxonomy
-(branding, content-marketing, ppc, smm, email-marketing, video-production,
-performance-marketing, etc.) — names occasionally drift, and the
-parser silently accepts unknown tags and returns zero results.
+(branding, content-marketing, ppc, smm, email-marketing,
+video-production, inbound-marketing, marketing-strategy,
+conversion-optimization, etc.) — names drift, and the parser
+silently accepts unknown tags and returns zero results. Common
+mis-mappings: there is no `performance-marketing`,
+`demand-gen`, or `demand-generation` tag — use `inbound-marketing` /
+`marketing-strategy` / `conversion-optimization` plus a keyword
+fallback.
 
 Field kinds you'll use most:
 - **categorical**: `industry` (always `marketing_agency`), `state`, `pricing_model`, `company_size_signal`, `geography_served` — op `:`
@@ -162,7 +172,7 @@ bareword := IDENT | NUMBER          # → keyword:<bareword>
 industry:marketing_agency service_provided:branding@high
 industry:marketing_agency service_provided:ppc service_provided:content-marketing
 industry:marketing_agency state:CA,NY -company_size_signal:solo
-industry:marketing_agency (service_provided:performance-marketing@high OR service_provided:demand-gen@high)
+industry:marketing_agency (service_provided:inbound-marketing@high OR service_provided:marketing-strategy@high)
 b2b industry:marketing_agency service_provided:content-marketing@high
 industry:marketing_agency rating>=4 review_count_total>=20 has:clutch
 industry:marketing_agency NOT (service_provided:seo OR service_provided:web-development)
@@ -235,15 +245,18 @@ GET /v1/search?filter=industry:marketing_agency+service_provided:content-marketi
 
 User: *"Someone to run our quarterly demand-gen campaigns and own the funnel."*
 
-That's `performance-marketing` and/or `demand-gen` (check `/v1/tags`
-for exact tag names — `demand-gen` may be `demand-generation`). Then:
+The catalog has **no** `performance-marketing` / `demand-gen` /
+`demand-generation` tags — that user-phrasing maps to
+`inbound-marketing`, `marketing-strategy`, or
+`conversion-optimization`, plus a keyword fallback for the user's
+exact wording:
 
 ```
-GET /v1/search?filter=industry:marketing_agency+(service_provided:performance-marketing@high OR service_provided:demand-generation@high)
+GET /v1/search?filter=industry:marketing_agency+(service_provided:inbound-marketing@high OR service_provided:marketing-strategy@high OR service_provided:conversion-optimization@high)+(demand OR funnel)
 ```
 
-If breakdowns come back thin, broaden — drop the `@high` evidence
-qualifier or fall back to keyword: `demand industry:marketing_agency`.
+If breakdowns come back thin, drop the `@high` evidence qualifier or
+fall back to pure keyword: `demand industry:marketing_agency`.
 
 ### E. Quality threshold (third-party signals)
 

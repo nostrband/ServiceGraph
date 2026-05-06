@@ -5,7 +5,8 @@ license: MIT
 metadata:
   api_base: https://api.servicegraph.co
   industry: pr_comms
-  version: "0.1"
+  service: public-relations
+  version: "0.2"
 ---
 
 # find-pr-agency
@@ -13,7 +14,12 @@ metadata:
 Drive the **ServiceGraph API** (`https://api.servicegraph.co`) to find,
 shortlist, and enrich US public-relations and communications agencies.
 
-**Always pin `industry:pr_comms`.** Sub-types (media relations, crisis,
+**Always pin `service_provided:public-relations`.** Note: the
+catalog's nominal `industry:pr_comms` value returns zero firms in
+the live release — PR/comms firms are tagged with
+`service_provided:public-relations` instead, typically under
+adjacent industries (marketing_agency, other_pro_services). Pin the
+service tag, not the industry. Sub-types (media relations, crisis,
 IR, public affairs, healthcare PR, tech PR, B2B PR, internal comms,
 brand reputation) are NOT separate tags — sub-type specialization is
 a keyword substring search on firm text.
@@ -65,11 +71,14 @@ Before constructing any filter, call:
 GET https://api.servicegraph.co/v1/tags?include_values=1
 ```
 
-Cache the response for the conversation. Confirm `pr_comms` is in the
-`industry` value list.
+Cache the response for the conversation. Confirm `public-relations`
+is in the `service_provided` value list — that's the pin this skill
+relies on. The nominal `pr_comms` industry value is empty in the
+current release; don't pin it.
 
 Field kinds you'll use most:
-- **categorical**: `industry` (always `pr_comms`), `state`, `pricing_model`, `company_size_signal`, `geography_served` — op `:`
+- **tag_set_with_evidence**: `service_provided` (always include `public-relations`) — op `:` with optional `@evidence`
+- **categorical**: `state`, `pricing_model`, `company_size_signal`, `geography_served` — op `:`
 - **numeric**: `rating`, `review_count_total`, `founded_year` — ops `= >= <= > <`
 - **presence**: `has:phone`, `has:clutch`, `has:rating`, `has:linkedin_company`, …
 - **keyword**: free-text substring across firm name / brand / title / meta / legal_name. **This is how you specialize on sub-type and vertical** (tech, healthcare, IR, crisis, public affairs, B2B, etc.).
@@ -160,14 +169,14 @@ bareword := IDENT | NUMBER          # → keyword:<bareword>
 **PR-flavored examples** (validate yours with `/v1/check`):
 
 ```
-industry:pr_comms tech state:NY
-industry:pr_comms healthcare
-industry:pr_comms b2b saas
-industry:pr_comms crisis
-industry:pr_comms investor relations
-industry:pr_comms ipo state:NY,CA
-industry:pr_comms public affairs state:DC
-industry:pr_comms rating>=4 has:clutch
+service_provided:public-relations tech state:NY
+service_provided:public-relations healthcare
+service_provided:public-relations b2b saas
+service_provided:public-relations crisis
+service_provided:public-relations investor relations
+service_provided:public-relations ipo state:NY,CA
+service_provided:public-relations public affairs state:DC
+service_provided:public-relations rating>=4 has:clutch
 ```
 
 When in doubt, hit `/v1/check?filter=...` first.
@@ -212,8 +221,8 @@ echo -n "edelman.com" | tr 'A-Z' 'a-z' \
 User: *"Tech PR agency in NY for our Series-B announcement."*
 
 ```
-GET /v1/explore?filter=industry:pr_comms+tech+state:NY
-GET /v1/search?filter=industry:pr_comms+tech+state:NY&limit=10
+GET /v1/explore?filter=service_provided:public-relations+tech+state:NY
+GET /v1/search?filter=service_provided:public-relations+tech+state:NY&limit=10
 GET /v1/get/<firm_id>     # ×3
 ```
 
@@ -222,7 +231,7 @@ GET /v1/get/<firm_id>     # ×3
 User: *"Three IR firms for our upcoming IPO roadshow."*
 
 ```
-GET /v1/search?filter=industry:pr_comms+(investor relations OR ir)+ipo
+GET /v1/search?filter=service_provided:public-relations+(investor relations OR ir)+ipo
 ```
 
 ### C. Crisis comms (urgent)
@@ -230,7 +239,7 @@ GET /v1/search?filter=industry:pr_comms+(investor relations OR ir)+ipo
 User: *"Crisis comms help — brand reputation issue blowing up online."*
 
 ```
-GET /v1/search?filter=industry:pr_comms+crisis&limit=10&order_by=relevance
+GET /v1/search?filter=service_provided:public-relations+crisis&limit=10&order_by=relevance
 ```
 
 Surface as urgent: skip `/v1/explore`, jump straight to `/v1/search`,
@@ -241,7 +250,7 @@ present briefs immediately.
 User: *"Healthcare PR agency familiar with FDA regulatory comms."*
 
 ```
-GET /v1/search?filter=industry:pr_comms+healthcare+(fda OR regulatory)
+GET /v1/search?filter=service_provided:public-relations+healthcare+(fda OR regulatory)
 ```
 
 ### E. Indirect intent — "we need press"
@@ -252,7 +261,7 @@ and the trade press."*
 That's product-launch / tech PR. Translate:
 
 ```
-GET /v1/search?filter=industry:pr_comms+(tech OR startup)+(launch OR series-b)&limit=10
+GET /v1/search?filter=service_provided:public-relations+(tech OR startup)+(launch OR series-b)&limit=10
 ```
 
 If thin, drop the launch/series-b keyword — most tech PR firms do
@@ -264,7 +273,7 @@ User: *"Public affairs firms with state-government experience in
 California."*
 
 ```
-GET /v1/search?filter=industry:pr_comms+public affairs+state:CA
+GET /v1/search?filter=service_provided:public-relations+public affairs+state:CA
 ```
 
 ### G. BYO apex list — enrich domains
@@ -277,7 +286,7 @@ User pastes 8–20 PR-firm domains. For each:
 
 ## Gotchas
 
-- **Always pin `industry:pr_comms`.** Without it, "tech PR" / "crisis" / "investor relations" as keywords leak into marketing or other industries.
+- **Always pin `service_provided:public-relations`.** Don't pin `industry:pr_comms` — it's empty in the live catalog. PR firms are tagged with the service tag across adjacent industries (marketing_agency, other_pro_services). Without the service pin, "tech PR" / "crisis" / "investor relations" as keywords leak into general marketing.
 - **Defer to `find-marketing-agency` for full-service marketing engagements.** When PR is one of several service lines (PR + content + paid + social), the marketing-agency skill is the right fire.
 - **Sub-types are keyword-only.** Multi-word sub-types split into ANDed barewords (`investor relations` → `investor` AND `relations`).
 - **"Write me a press release" / "draft talking points" is do-the-work.** Refuse and offer to find a firm if the user wants to engage one.
@@ -309,8 +318,8 @@ ideally with 4-star ratings and Fortune 500 client experience."*
 
 ```
 GET /v1/tags?include_values=1
-GET /v1/check?filter=industry:pr_comms+tech+state:NY+rating>=4
-GET /v1/explore?filter=industry:pr_comms+tech+state:NY+rating>=4
+GET /v1/check?filter=service_provided:public-relations+tech+state:NY+rating>=4
+GET /v1/explore?filter=service_provided:public-relations+tech+state:NY+rating>=4
 GET /v1/search?filter=...&limit=10
 GET /v1/get/<firm_id>     # ×3
 ```

@@ -5,7 +5,7 @@ license: MIT
 metadata:
   api_base: https://api.servicegraph.co
   industry: cybersecurity
-  version: "0.1"
+  version: "0.2"
 ---
 
 # find-cybersecurity-firm
@@ -13,15 +13,20 @@ metadata:
 Drive the **ServiceGraph API** (`https://api.servicegraph.co`) to find,
 shortlist, and enrich US cybersecurity firms.
 
-**Always pin the cybersecurity industry tag** (the catalog uses
-`industry:cybersecurity` — confirm exact value via `/v1/tags`; older
-catalog releases used `industry:security`). The catalog has a small
-service-tag sub-taxonomy for cybersecurity (3 tags per the catalog
-docs); confirm tag names via `/v1/tags?include_values=1`.
+**Always pin `service_provided:cybersecurity`** — that's the only
+relevant structured tag in the live catalog. Older skill docs and
+the catalog source mention sub-tags like `pen-testing` and
+`security-audit`, but in the current release **none of those exist
+as separate tags** — `cybersecurity` is the broad catch-all and
+every sub-type (pen-testing, red-team, vCISO, SOC 2 readiness, IR
+retainer, IAM, cloud security, AppSec) is a keyword substring search
+on firm text. Confirm via `/v1/tags?include_values=1` once per
+session.
 
-Sub-types not covered by structured tags (red-team, vCISO, SOC 2
-readiness, IR retainer, IAM, AppSec) are keyword substring searches
-on firm text.
+The industry tag also drifts between releases — newer catalogs use
+`industry:cybersecurity`, older ones used `industry:security`.
+Confirm the value via `/v1/tags` and pin both `industry` and
+`service_provided:cybersecurity` for safety.
 
 Any HTTP client works (curl, fetch, requests). Examples below use curl.
 
@@ -69,9 +74,11 @@ GET https://api.servicegraph.co/v1/tags?include_values=1
 ```
 
 Cache the response for the conversation. Confirm the cybersecurity
-industry tag value name (`cybersecurity` or `security`) and check
-which `service_provided` tags exist for cybersecurity sub-services
-(typically pen-testing, security-audit, and one more).
+industry tag value name (`cybersecurity` or older `security`) and
+that `cybersecurity` is in the `service_provided` value list. The
+live catalog has only the broad `service_provided:cybersecurity`
+tag — there are no separate `pen-testing` / `security-audit` /
+`appsec` tags despite older docs sometimes mentioning them.
 
 Field kinds you'll use most:
 - **categorical**: `industry` (cybersecurity), `state`, `pricing_model`, `company_size_signal`, `geography_served` — op `:`
@@ -167,24 +174,30 @@ bareword := IDENT | NUMBER          # → keyword:<bareword>
 `cybersecurity` with whatever `/v1/tags` returns as the industry value):
 
 ```
-industry:cybersecurity service_provided:pen-testing
-industry:cybersecurity service_provided:security-audit soc 2
-industry:cybersecurity vciso
-industry:cybersecurity incident response retainer
-industry:cybersecurity cloud aws
-industry:cybersecurity application security sast
-industry:cybersecurity rating>=4 has:clutch
-industry:cybersecurity hipaa
+industry:cybersecurity service_provided:cybersecurity
+service_provided:cybersecurity pen-testing
+service_provided:cybersecurity security audit soc 2
+service_provided:cybersecurity vciso
+service_provided:cybersecurity incident response retainer
+service_provided:cybersecurity cloud aws
+service_provided:cybersecurity application security sast
+service_provided:cybersecurity rating>=4 has:clutch
+service_provided:cybersecurity hipaa
 ```
 
-When in doubt, hit `/v1/check?filter=...` first.
+When in doubt, hit `/v1/check?filter=...` first. (Note: the live
+catalog has no separate `pen-testing` / `security-audit` /
+`appsec` tags. Pin `service_provided:cybersecurity` and treat all
+sub-types as keywords.)
 
-**Sub-type → keyword/tag mapping**:
+**Sub-type → keyword mapping** (all sub-types are keyword-only —
+the live catalog has only the broad `service_provided:cybersecurity`
+tag):
 
 | User asks for | Use |
 |---|---|
-| Pen test / red team / penetration testing | `service_provided:pen-testing` (if tag exists) or `pen-testing`/`red team` keywords |
-| Security audit / assessment | `service_provided:security-audit` (if tag exists) or `audit`/`assessment` keywords |
+| Pen test / red team / penetration testing | keywords `pen-testing`, `red team` |
+| Security audit / assessment | keywords `audit`, `assessment` |
 | vCISO / fractional CISO | `vciso`, `fractional ciso` |
 | SOC 2 readiness / preparation | `soc 2`, `readiness` |
 | Incident response / forensics | `incident response`, `forensics`, `ir retainer` |
@@ -219,8 +232,8 @@ echo -n "mandiant.com" | tr 'A-Z' 'a-z' \
 User: *"Pen-testing firm for our SOC 2 audit."*
 
 ```
-GET /v1/explore?filter=industry:cybersecurity+(service_provided:pen-testing OR pen-testing)+soc 2
-GET /v1/search?filter=industry:cybersecurity+(service_provided:pen-testing OR pen-testing)+soc 2&limit=10
+GET /v1/explore?filter=industry:cybersecurity+service_provided:cybersecurity+pen-testing+soc 2
+GET /v1/search?filter=industry:cybersecurity+service_provided:cybersecurity+pen-testing+soc 2&limit=10
 GET /v1/get/<firm_id>     # ×3
 ```
 
@@ -323,8 +336,8 @@ ideally with HIPAA experience for a healthcare-tech context."*
 
 ```
 GET /v1/tags?include_values=1
-GET /v1/check?filter=industry:cybersecurity+(service_provided:pen-testing OR pen-testing)+soc 2+hipaa+rating>=4
-GET /v1/explore?filter=industry:cybersecurity+(service_provided:pen-testing OR pen-testing)+soc 2+hipaa+rating>=4
+GET /v1/check?filter=industry:cybersecurity+service_provided:cybersecurity+pen-testing+soc 2+hipaa+rating>=4
+GET /v1/explore?filter=industry:cybersecurity+service_provided:cybersecurity+pen-testing+soc 2+hipaa+rating>=4
 GET /v1/search?filter=...&limit=10
 GET /v1/get/<firm_id>     # ×3
 ```
