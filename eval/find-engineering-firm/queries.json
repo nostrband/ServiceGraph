@@ -1,0 +1,28 @@
+{
+  "version": "1",
+  "skill": "find-engineering-firm",
+  "split_strategy": "Manual. The dominant failure mode is keyword collision with software engineering (N1 'software engineering firm to build SaaS', N2 'engineering manager hire', N8 'Postgres vs DynamoDB software architecture'). Also a sibling-industry trap (N7 'architect for residential remodel'). All four hard cases in train. Validation tests generalization across remaining sub-disciplines and out-of-scope shapes.",
+  "passing_rule": "should_trigger=true → trigger_rate > 0.5 over 3 runs. should_trigger=false → trigger_rate ≤ 0.5.",
+  "queries": [
+    {"id": "P1", "split": "train", "should_trigger": true, "query": "find civil engineering firms in Florida that focus on transportation infrastructure", "notes": "Direct, civil + sub-niche + state."},
+    {"id": "P3", "split": "train", "should_trigger": true, "query": "we need an MEP engineering consultancy for a hospital project", "notes": "MEP + healthcare-facility vertical."},
+    {"id": "P4", "split": "train", "should_trigger": true, "query": "looking for mechanical engineering firms specializing in HVAC for industrial facilities", "notes": "Mechanical + HVAC + industrial."},
+    {"id": "P7", "split": "train", "should_trigger": true, "query": "we're building a 10-story office and need a structural engineer to stamp the drawings", "notes": "HARD: indirect — 'stamp the drawings' is real-engineering jargon, no 'firm/agency' word. Tests jargon-language triggering."},
+    {"id": "P9", "split": "train", "should_trigger": true, "query": "compare three civil engineering firms with at least 4-star ratings and PE-licensed engineers", "notes": "Quality threshold + PE credential."},
+    {"id": "P10", "split": "train", "should_trigger": true, "query": "we need an electrical engineering consultancy for a manufacturing facility upgrade", "notes": "Electrical + manufacturing."},
+    {"id": "P2", "split": "validation", "should_trigger": true, "query": "shortlist three structural engineering firms with high-rise commercial building experience", "notes": "Structural + commercial buildings."},
+    {"id": "P5", "split": "validation", "should_trigger": true, "query": "build a longlist of 25 US environmental engineering firms working on remediation projects", "notes": "Environmental + remediation, longlist scale."},
+    {"id": "P6", "split": "validation", "should_trigger": true, "query": "we shortlisted 12 engineering firm domains — pull contact info and confirm which specialize in MEP", "notes": "BYO list (enrichment) using the proven 'specialize in' pattern."},
+    {"id": "P8", "split": "validation", "should_trigger": true, "query": "find geotechnical engineering firms in California with seismic-design experience", "notes": "Geotechnical + seismic vertical."},
+    {"id": "N1", "split": "train", "should_trigger": false, "query": "find me a software engineering firm in Austin to build our SaaS app", "notes": "HARD: software-engineering — should defer to find-software-developer. The keyword-collision trap."},
+    {"id": "N2", "split": "train", "should_trigger": false, "query": "I want to hire an engineering manager for our team", "notes": "HARD: in modern B2B 'engineering manager' almost always means software-engineering recruiting. No 'software' word, but the implicit context is software."},
+    {"id": "N3", "split": "train", "should_trigger": false, "query": "explain how reinforced concrete works", "notes": "Knowledge question, no procurement intent."},
+    {"id": "N7", "split": "train", "should_trigger": false, "query": "we need an architect for a residential remodel", "notes": "HARD: residential consumer + adjacent industry (architecture, not engineering). Catalog is B2B-only."},
+    {"id": "N8", "split": "train", "should_trigger": false, "query": "what's better for our scaling — Postgres or DynamoDB?", "notes": "HARD: software-architecture question, not engineering firm. Uses 'architecture'/'scaling' which can have keyword overlap."},
+    {"id": "N10", "split": "train", "should_trigger": false, "query": "how do I become a licensed engineer?", "notes": "Career question, not procurement."},
+    {"id": "N4", "split": "validation", "should_trigger": false, "query": "what's the typical hourly rate for a civil engineer?", "notes": "Market research."},
+    {"id": "N5", "split": "validation", "should_trigger": false, "query": "find me an engineering firm in Munich for our German plant", "notes": "Non-US."},
+    {"id": "N6", "split": "validation", "should_trigger": false, "query": "I'm looking for a freelance engineer for a one-off design", "notes": "Individual freelancer."},
+    {"id": "N9", "split": "validation", "should_trigger": false, "query": "review this Ansys simulation report", "notes": "DIY task with engineering-software keyword overlap."}
+  ]
+}
