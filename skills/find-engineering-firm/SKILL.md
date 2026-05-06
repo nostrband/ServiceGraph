@@ -4,8 +4,8 @@ description: Use whenever the user wants to find, shortlist, vet, or enrich US e
 license: MIT
 metadata:
   api_base: https://api.servicegraph.co
-  industry: engineering
-  version: "0.1"
+  industry: engineering_services
+  version: "0.2"
 ---
 
 # find-engineering-firm
@@ -13,7 +13,7 @@ metadata:
 Drive the **ServiceGraph API** (`https://api.servicegraph.co`) to find,
 shortlist, and enrich US **real-world** engineering firms — buildings,
 infrastructure, energy, manufacturing. The catalog tags firms with
-`industry:engineering` and a 23-tag service sub-taxonomy spanning
+`industry:engineering_services` and a 23-tag service sub-taxonomy spanning
 civil, structural, MEP, mechanical, electrical, geotechnical,
 surveying, transportation, environmental, manufacturing, energy,
 aerospace, biomedical, materials-testing, and more.
@@ -24,7 +24,7 @@ review" — those are all software-developer territory. The first thing
 this skill confirms is that the user means real engineering, not
 software.
 
-**Always pin `industry:engineering`.** Sub-disciplines are typically
+**Always pin `industry:engineering_services`.** Sub-disciplines are typically
 structured `service_provided` tags (`civil-engineering`,
 `structural-engineering`, `mep-engineering`, etc.) — confirm exact
 names via `/v1/tags`.
@@ -183,14 +183,14 @@ bareword := IDENT | NUMBER          # → keyword:<bareword>
 **Engineering-flavored examples** (validate yours with `/v1/check`):
 
 ```
-industry:engineering service_provided:civil-engineering state:FL transportation
-industry:engineering service_provided:structural-engineering high-rise
-industry:engineering service_provided:mep-engineering hospital
-industry:engineering service_provided:mechanical-engineering hvac industrial
-industry:engineering service_provided:environmental-engineering remediation
-industry:engineering service_provided:geotechnical-engineering state:CA seismic
-industry:engineering service_provided:civil-engineering@high rating>=4 has:clutch
-industry:engineering service_provided:electrical-engineering manufacturing
+industry:engineering_services service_provided:civil-engineering state:FL transportation
+industry:engineering_services service_provided:structural-engineering high-rise
+industry:engineering_services service_provided:mep-engineering hospital
+industry:engineering_services service_provided:mechanical-engineering hvac industrial
+industry:engineering_services service_provided:environmental-engineering remediation
+industry:engineering_services service_provided:geotechnical-engineering state:CA seismic
+industry:engineering_services service_provided:civil-engineering@high rating>=4 has:clutch
+industry:engineering_services service_provided:electrical-engineering manufacturing
 ```
 
 When in doubt, hit `/v1/check?filter=...` first.
@@ -206,7 +206,7 @@ the catalog has 23 sub-tags so this isn't exhaustive):
 | Mechanical engineering / HVAC | `service_provided:mechanical-engineering` |
 | Electrical engineering | `service_provided:electrical-engineering` |
 | Geotechnical / soils / foundations | `service_provided:geotechnical-engineering` |
-| Surveying / land surveys | `service_provided:surveying` |
+| Surveying / land surveys / mapping | `service_provided:surveying-mapping` |
 | Transportation engineering | `service_provided:transportation-engineering` |
 | Environmental / remediation | `service_provided:environmental-engineering` |
 | Manufacturing / process | `service_provided:manufacturing-engineering` |
@@ -247,8 +247,8 @@ User: *"Civil engineering firms in Florida that focus on transportation
 infrastructure."*
 
 ```
-GET /v1/explore?filter=industry:engineering+service_provided:civil-engineering+state:FL+transportation
-GET /v1/search?filter=industry:engineering+service_provided:civil-engineering+state:FL+transportation&limit=10
+GET /v1/explore?filter=industry:engineering_services+service_provided:civil-engineering+state:FL+transportation
+GET /v1/search?filter=industry:engineering_services+service_provided:civil-engineering+state:FL+transportation&limit=10
 GET /v1/get/<firm_id>     # ×3
 ```
 
@@ -258,7 +258,7 @@ User: *"Structural engineering firms with high-rise commercial
 building experience."*
 
 ```
-GET /v1/search?filter=industry:engineering+service_provided:structural-engineering+(high-rise OR commercial)
+GET /v1/search?filter=industry:engineering_services+service_provided:structural-engineering+(high-rise OR commercial)
 ```
 
 ### C. MEP for a hospital project
@@ -266,7 +266,7 @@ GET /v1/search?filter=industry:engineering+service_provided:structural-engineeri
 User: *"MEP engineering consultancy for a hospital project."*
 
 ```
-GET /v1/search?filter=industry:engineering+service_provided:mep-engineering+hospital
+GET /v1/search?filter=industry:engineering_services+service_provided:mep-engineering+hospital
 ```
 
 ### D. Mechanical / HVAC for industrial facility
@@ -275,7 +275,7 @@ User: *"Mechanical engineering firms specializing in HVAC for industrial
 facilities."*
 
 ```
-GET /v1/search?filter=industry:engineering+service_provided:mechanical-engineering+hvac+industrial
+GET /v1/search?filter=industry:engineering_services+service_provided:mechanical-engineering+hvac+industrial
 ```
 
 ### E. Indirect intent — "stamp the drawings"
@@ -286,7 +286,7 @@ to stamp the drawings."*
 That's structural engineering for commercial-building permitting:
 
 ```
-GET /v1/search?filter=industry:engineering+service_provided:structural-engineering+commercial
+GET /v1/search?filter=industry:engineering_services+service_provided:structural-engineering+commercial
 ```
 
 The "PE stamp" angle isn't structured — surface PE-license details
@@ -299,7 +299,7 @@ User: *"Geotechnical engineering firms in California with seismic-design
 experience."*
 
 ```
-GET /v1/search?filter=industry:engineering+service_provided:geotechnical-engineering+state:CA+seismic
+GET /v1/search?filter=industry:engineering_services+service_provided:geotechnical-engineering+state:CA+seismic
 ```
 
 ### G. Quality threshold + PE-licensed
@@ -308,7 +308,7 @@ User: *"Three civil engineering firms with at least 4-star ratings and
 PE-licensed engineers."*
 
 ```
-GET /v1/search?filter=industry:engineering+service_provided:civil-engineering@high+rating>=4+pe&limit=10
+GET /v1/search?filter=industry:engineering_services+service_provided:civil-engineering@high+rating>=4+pe&limit=10
 ```
 
 `pe` as a bareword catches "PE License", "PE-licensed", "Professional
@@ -326,7 +326,7 @@ User pastes 8–20 engineering firm domains. For each:
 
 ## Gotchas
 
-- **Always pin `industry:engineering`.** Without it, `civil-engineering` / `mep-engineering` / `electrical-engineering` keywords could leak into other industries (architecture firms sometimes list MEP coordination as a sub-service).
+- **Always pin `industry:engineering_services`.** Without it, `civil-engineering` / `mep-engineering` / `electrical-engineering` keywords could leak into other industries (architecture firms sometimes list MEP coordination as a sub-service).
 - **The hardest boundary is software-engineering.** "Engineering firm" / "engineering team" in modern B2B usage almost always means software in tech contexts. Defer those to `find-software-developer`. Real engineering is for buildings, infrastructure, energy, manufacturing — not for SaaS apps.
 - **"Engineering manager" hires are recruiting**, not procurement. Refuse.
 - **Architecture firms are a separate industry.** When the user wants the architect-of-record (the firm that designs the building's form and aesthetics), defer to `find-architecture-firm`. This skill is for the engineering disciplines that work with architects (structural, MEP, civil).
@@ -359,8 +359,8 @@ and 4-star ratings."*
 
 ```
 GET /v1/tags?include_values=1
-GET /v1/check?filter=industry:engineering+service_provided:civil-engineering+state:FL+transportation+pe+rating>=4
-GET /v1/explore?filter=industry:engineering+service_provided:civil-engineering+state:FL+transportation+pe+rating>=4
+GET /v1/check?filter=industry:engineering_services+service_provided:civil-engineering+state:FL+transportation+pe+rating>=4
+GET /v1/explore?filter=industry:engineering_services+service_provided:civil-engineering+state:FL+transportation+pe+rating>=4
 GET /v1/search?filter=...&limit=10
 GET /v1/get/<firm_id>     # ×3
 ```

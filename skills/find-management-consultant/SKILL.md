@@ -5,7 +5,7 @@ license: MIT
 metadata:
   api_base: https://api.servicegraph.co
   industry: management_consulting
-  version: "0.1"
+  version: "0.2"
 ---
 
 # find-management-consultant
@@ -14,13 +14,14 @@ Drive the **ServiceGraph API** (`https://api.servicegraph.co`) to find,
 shortlist, and enrich US management consulting firms. The catalog
 tags firms with `industry:management_consulting` and a 7-tag service
 sub-taxonomy: strategy, operations, executive-coaching,
-leadership-development, org-development, pmo-pm, sales-revenue.
+leadership-development, organizational-development, pmo-project-management, sales-revenue-consulting.
 
 **Always pin `industry:management_consulting`.** Sub-services are
 structured `service_provided` tags (`strategy-consulting`,
 `operations-consulting`, `executive-coaching`,
-`leadership-development`, `org-development`, `pmo-pm`,
-`sales-revenue` — confirm exact names via `/v1/tags`).
+`leadership-development`, `organizational-development`,
+`pmo-project-management`, `sales-revenue-consulting` — confirm exact
+names via `/v1/tags`).
 
 Any HTTP client works (curl, fetch, requests). Examples below use curl.
 
@@ -167,9 +168,9 @@ industry:management_consulting service_provided:strategy-consulting@high
 industry:management_consulting service_provided:operations-consulting state:NY
 industry:management_consulting service_provided:executive-coaching
 industry:management_consulting (service_provided:strategy-consulting@high OR service_provided:operations-consulting@high)
-industry:management_consulting service_provided:org-development change
+industry:management_consulting service_provided:organizational-development change
 industry:management_consulting service_provided:strategy-consulting@high rating>=4 has:clutch
-industry:management_consulting service_provided:pmo-pm
+industry:management_consulting service_provided:pmo-project-management
 ```
 
 When in doubt, hit `/v1/check?filter=...` first.
@@ -182,9 +183,9 @@ When in doubt, hit `/v1/check?filter=...` first.
 | Operations / ops consulting | `service_provided:operations-consulting` |
 | Executive coach (for senior leaders) | `service_provided:executive-coaching` |
 | Leadership development programs | `service_provided:leadership-development` |
-| Org design / change management | `service_provided:org-development` |
-| PMO / program management | `service_provided:pmo-pm` |
-| Sales/revenue ops | `service_provided:sales-revenue` |
+| Org design / change management | `service_provided:organizational-development` |
+| PMO / program management | `service_provided:pmo-project-management` |
+| Sales/revenue ops | `service_provided:sales-revenue-consulting` |
 
 ## firm_id contract
 
@@ -241,10 +242,10 @@ GET /v1/search?filter=industry:management_consulting+service_provided:executive-
 User: *"Change-management partners for a post-merger integration."*
 
 ```
-GET /v1/search?filter=industry:management_consulting+service_provided:org-development+(merger OR integration)
+GET /v1/search?filter=industry:management_consulting+service_provided:organizational-development+(merger OR integration)
 ```
 
-If thin, drop the keywords and use `service_provided:org-development@high`
+If thin, drop the keywords and use `service_provided:organizational-development@high`
 alone — the tag itself captures change-management.
 
 ### E. Indirect intent — "fractional COO"

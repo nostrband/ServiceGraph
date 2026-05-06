@@ -5,7 +5,7 @@ license: MIT
 metadata:
   api_base: https://api.servicegraph.co
   industry: it_services
-  version: "0.2"
+  version: "0.3"
 ---
 
 # find-software-developer
@@ -13,9 +13,13 @@ metadata:
 Drive the **ServiceGraph API** (`https://api.servicegraph.co`) to find,
 shortlist, and enrich US software development firms. The catalog has
 tens of thousands of US IT-services firms tagged across 21 service
-sub-tags (custom-software, web-development, mobile-app-development,
-api-integrations, devops, cloud-consulting, hosting, system-
-integration, etc.).
+sub-tags including web-development, mobile-app-development,
+api-integration, devops-services, cloud-services, system-integration,
+application-modernization, staff-augmentation, and managed-services.
+(Note: there is no `custom-software` or `hosting` tag — for those
+user-facing concepts, pin `system-integration` or `application-
+modernization` as the closest tag and add keywords like `custom`,
+`software`, `hosting`.)
 
 **Always pin `industry:it_services` in the filter.** This skill
 exists to do that automatically — the user shouldn't have to think
@@ -63,10 +67,14 @@ GET https://api.servicegraph.co/v1/tags?include_values=1
 ```
 
 Cache the response for the conversation. Confirm IT-relevant tags
-exist in the returned `service_provided` taxonomy (custom-software,
-web-development, mobile-app-development, devops, cloud-consulting,
-api-integrations, etc.) — names occasionally drift, and the parser
-silently accepts unknown tags and returns zero results.
+exist in the returned `service_provided` taxonomy (web-development,
+mobile-app-development, api-integration, devops-services,
+cloud-services, system-integration, application-modernization,
+staff-augmentation, managed-services). Note the catalog has **no**
+`custom-software` or `hosting` tags — those are user-facing concepts
+that map to `system-integration` / `application-modernization` plus
+keyword. The parser silently accepts unknown tags and returns zero
+results, so verify before pinning.
 
 Field kinds you'll use most:
 - **categorical**: `industry` (always `it_services`), `state`, `pricing_model`, `company_size_signal`, `geography_served` — op `:`
@@ -161,13 +169,13 @@ bareword := IDENT | NUMBER          # → keyword:<bareword>
 **IT-flavored examples** (validate yours with `/v1/check`):
 
 ```
-industry:it_services service_provided:custom-software@high state:TX
-industry:it_services service_provided:mobile-app-development service_provided:custom-software
-industry:it_services service_provided:devops aws
-industry:it_services service_provided:api-integrations fintech
+industry:it_services custom software state:TX
+industry:it_services service_provided:mobile-app-development
+industry:it_services service_provided:devops-services aws
+industry:it_services service_provided:api-integration fintech
 industry:it_services python aws state:CA
-industry:it_services service_provided:custom-software@high rating>=4 has:clutch
-industry:it_services NOT service_provided:hosting
+industry:it_services service_provided:system-integration@high rating>=4 has:clutch
+industry:it_services service_provided:application-modernization legacy
 ```
 
 When in doubt about whether a filter parses, hit `/v1/check?filter=...`
@@ -217,10 +225,10 @@ echo -n "thoughtworks.com" | tr 'A-Z' 'a-z' \
 User: *"Software dev shop in Austin for a custom B2B platform."*
 
 ```
-GET /v1/explore?filter=industry:it_services+service_provided:custom-software@high+state:TX
+GET /v1/explore?filter=industry:it_services+service_provided:system-integration@high+custom+software+state:TX
 # → pool size + breakdowns
 
-GET /v1/search?filter=industry:it_services+service_provided:custom-software@high+state:TX&limit=10
+GET /v1/search?filter=industry:it_services+service_provided:system-integration@high+custom+software+state:TX&limit=10
 # → 10 brief cards; user picks 3
 
 GET /v1/get/<firm_id>     # ×3
@@ -242,7 +250,7 @@ GET /v1/search?filter=industry:it_services+service_provided:mobile-app-developme
 User: *"DevOps consultancy to migrate us from on-prem to AWS."*
 
 ```
-GET /v1/search?filter=industry:it_services+service_provided:devops+aws+migration
+GET /v1/search?filter=industry:it_services+service_provided:devops-services+aws+migration
 ```
 
 If breakdowns come back thin, drop `migration` first — it's a vertical
@@ -256,7 +264,7 @@ Northeast preferred."*
 That's a custom-software ask. Translate:
 
 ```
-GET /v1/search?filter=industry:it_services+service_provided:custom-software+state:NY,MA,CT,NJ,PA
+GET /v1/search?filter=industry:it_services+custom+software+state:NY,MA,CT,NJ,PA
 # → 10 brief cards; user narrows
 ```
 
@@ -267,7 +275,7 @@ User: *"Software houses that specialize in fintech and have SOC 2 readiness."*
 `fintech` and `soc2` are not structured facets — keyword them:
 
 ```
-GET /v1/search?filter=industry:it_services+service_provided:custom-software+fintech+soc2
+GET /v1/search?filter=industry:it_services+custom+software+fintech+soc2
 ```
 
 ### F. Quality threshold + third-party signals
@@ -275,7 +283,7 @@ GET /v1/search?filter=industry:it_services+service_provided:custom-software+fint
 User: *"Three custom software firms with at least 4-star ratings, 50+ reviews."*
 
 ```
-GET /v1/search?filter=industry:it_services+service_provided:custom-software@high+rating>=4+review_count_total>=50&limit=10
+GET /v1/search?filter=industry:it_services+service_provided:system-integration@high+custom+software+rating>=4+review_count_total>=50&limit=10
 ```
 
 ### G. API/backend specialty + remote
@@ -287,7 +295,7 @@ User: *"API/backend team to extend our SaaS — Bay Area or remote-friendly."*
 `api` / `backend` keywords:
 
 ```
-GET /v1/search?filter=industry:it_services+service_provided:api-integrations+(state:CA OR geography_served:national_US)+saas
+GET /v1/search?filter=industry:it_services+service_provided:api-integration+(state:CA OR geography_served:national_US)+saas
 ```
 
 ### H. BYO apex list — enrich domains the user already has
@@ -304,7 +312,7 @@ US IT-services catalog and pulling contact info in one pass.
 
 ## Gotchas
 
-- **Always pin `industry:it_services`.** Without it, `service_provided:custom-software` may match marketing or design firms that also list software services.
+- **Always pin `industry:it_services`.** Without it, `web-development` / `mobile-app-development` keywords leak into marketing or design firms that also offer software-adjacent services.
 - **`industry:data_ai_consulting` is a sibling industry, not a sub-tag.** AI/ML-focused firms live there. If the user wants strictly an AI/ML/data-engineering firm, this skill returns an under-precise list — defer to `find-service-providers` (or a future AI-focused skill).
 - **Defer to `find-web-developer` for strictly website/landing-page projects** when that skill is loaded. This skill covers web dev as a sub-service, but the dedicated skill will out-rank it on narrow web-only asks.
 - **Programming language and tech stack are NOT structured tags.** `python`, `react`, `aws`, `kubernetes`, `rust`, etc. are keyword substring matches. Multi-word stacks (`ruby on rails`) split into separate AND'd keywords.
@@ -342,14 +350,14 @@ SOC 2-ready, ideally with at least a 4-star rating."*
 ```
 # 1. Discover fields (once per session)
 GET /v1/tags?include_values=1
-# Confirms 'custom-software' is a valid service_provided tag, 'rating'
+# Confirms 'system-integration' is a valid service_provided tag, 'rating'
 # is numeric, has:clutch is a presence flag.
 
 # 2. Validate the filter and scope the pool (free, no auth)
-GET /v1/check?filter=industry:it_services+service_provided:custom-software@high+healthcare+soc2+rating>=4
+GET /v1/check?filter=industry:it_services+service_provided:system-integration@high+custom+software+healthcare+soc2+rating>=4
 # → {"valid": true, "normalized": "..."}
 
-GET /v1/explore?filter=industry:it_services+service_provided:custom-software@high+healthcare+soc2+rating>=4
+GET /v1/explore?filter=industry:it_services+service_provided:system-integration@high+custom+software+healthcare+soc2+rating>=4
 # → {"count": 31, "breakdowns": {...}}
 
 # 3. Search briefs

@@ -5,7 +5,7 @@ license: MIT
 metadata:
   api_base: https://api.servicegraph.co
   industry: marketing_agency
-  version: "0.2"
+  version: "0.3"
 ---
 
 # find-marketing-agency
@@ -13,9 +13,9 @@ metadata:
 Drive the **ServiceGraph API** (`https://api.servicegraph.co`) to find,
 shortlist, and enrich US marketing agencies. The catalog has tens of
 thousands of US marketing firms tagged across 26 service sub-tags
-including branding, content-marketing, ppc, smm, email-marketing,
-web-design, video-production, inbound-marketing, marketing-strategy,
-and conversion-optimization. (Note: the catalog has no
+including branding, content-marketing, ppc, social-media-marketing,
+email-marketing, web-design, video-production, inbound-marketing,
+marketing-strategy, and conversion-optimization. (Note: the catalog has no
 `performance-marketing` or `demand-gen` / `demand-generation` tag —
 those user-phrasings map to `inbound-marketing` /
 `marketing-strategy` / `conversion-optimization` plus a keyword
@@ -67,9 +67,9 @@ GET https://api.servicegraph.co/v1/tags?include_values=1
 
 Cache the response for the conversation. Confirm the marketing-relevant
 service tags exist in the returned `service_provided` taxonomy
-(branding, content-marketing, ppc, smm, email-marketing,
-video-production, inbound-marketing, marketing-strategy,
-conversion-optimization, etc.) — names drift, and the parser
+(branding, content-marketing, ppc, social-media-marketing,
+email-marketing, video-production, inbound-marketing,
+marketing-strategy, conversion-optimization, etc.) — names drift, and the parser
 silently accepts unknown tags and returns zero results. Common
 mis-mappings: there is no `performance-marketing`,
 `demand-gen`, or `demand-generation` tag — use `inbound-marketing` /
@@ -263,12 +263,12 @@ fall back to pure keyword: `demand industry:marketing_agency`.
 User: *"Compare three social media agencies that have worked with Fortune 500 — high evidence."*
 
 ```
-GET /v1/search?filter=industry:marketing_agency+service_provided:smm@high+rating>=4+review_count_total>=20+has:clutch&limit=10
+GET /v1/search?filter=industry:marketing_agency+service_provided:social-media-marketing@high+rating>=4+review_count_total>=20+has:clutch&limit=10
 ```
 
 `fortune 500` is hard to filter structurally; surface to the user in
 the brief cards and let them pick from there, or add as a keyword
-(`industry:marketing_agency service_provided:smm@high fortune`).
+(`industry:marketing_agency service_provided:social-media-marketing@high fortune`).
 
 ### F. Video production
 
