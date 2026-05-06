@@ -7,10 +7,10 @@
 > Stop scraping. Your agent's directory of US service firms is here.
 
 Agent Skills for [**ServiceGraph**](https://servicegraph.co) — a structured
-catalog of **100k+ US professional-services firms** (law, marketing,
-consulting, accounting, IT services, architecture, engineering, HR, PR,
-design) with filters for industry, services offered, location, size, ratings,
-and third-party listing presence.
+catalog of **100k+ US professional-services firms** (law, marketing, design,
+consulting, accounting, IT services, AI/ML, web development, engineering,
+HR, PR, cybersecurity, and more) with filters for industry, services
+offered, location, size, ratings, and third-party listing presence.
 
 <p align="center">
   <img src="assets/servicegraph.png" alt="What you get for each firm — name, URL, phone, email, services, ratings, listings" width="800" />
@@ -84,13 +84,30 @@ content-led, local, ecommerce, B2B SEO, audits. Auto-pins
 </details>
 
 <details>
+<summary><strong>find-design-agency</strong></summary>
+
+Find US design and creative agencies — graphic design, UX/UI, product
+design, brand identity, packaging, illustration, motion design, creative
+direction. Auto-pins `industry:design_creative`. Defers to
+`find-marketing-agency` for marketing-led engagements where design is one
+of several services, and to `find-web-developer` when the deliverable is a
+built website rather than design assets.
+
+**Use when:**
+- "Find me a UX/UI design agency for our SaaS product"
+- "Shortlist three brand-identity studios in NY for our rebrand"
+- "Packaging design firm for a CPG launch"
+
+</details>
+
+<details>
 <summary><strong>find-software-developer</strong></summary>
 
 Find US software development firms — custom software, web/mobile development,
 backend/API, DevOps/cloud consulting, system integration, hosting. Auto-pins
 `industry:it_services`. Defers to `find-web-developer` for strictly
-website/landing-page projects, and to dedicated AI/ML routes for
-modeling-only work.
+website/landing-page projects, and to `find-ai-consultancy` for AI/ML
+modeling and data-engineering work.
 
 **Use when:**
 - "Find me a software dev shop in Austin"
@@ -103,8 +120,8 @@ modeling-only work.
 <summary><strong>find-web-developer</strong></summary>
 
 Find US web development firms — building, refreshing, or rebuilding
-websites: marketing sites, landing pages, ecommerce, WordPress/Webflow/
-Shopify, headless CMS, microsites, web frontend. Auto-pins
+marketing sites, landing pages, ecommerce, WordPress/Webflow/Shopify,
+headless CMS, microsites, and web frontend work. Auto-pins
 `industry:it_services service_provided:web-development`. Defers to
 `find-software-developer` for backend/API/mobile work, and to
 `find-marketing-agency` when scope spans broader marketing.
@@ -113,6 +130,22 @@ Shopify, headless CMS, microsites, web frontend. Auto-pins
 - "Find a web developer for our marketing landing page"
 - "Shortlist three Webflow agencies in California"
 - "Rebuild our ecommerce site on Shopify with custom theme work"
+
+</details>
+
+<details>
+<summary><strong>find-ai-consultancy</strong></summary>
+
+Find US AI/ML and data consulting firms — AI/ML development, MLOps,
+generative AI / LLM apps (RAG, chatbots, agents), computer vision, NLP,
+recommendation systems, data engineering, BI/analytics. Auto-pins
+`industry:data_ai_consulting`. Defers to `find-software-developer` for
+general app/backend work where AI is just a feature.
+
+**Use when:**
+- "Find an AI/ML consulting firm to build our recommendation engine"
+- "Three RAG/LLM consultancies for an enterprise chatbot project"
+- Indirect: "we want to use AI to predict customer churn — who can help?"
 
 </details>
 
@@ -163,6 +196,24 @@ sub-tags (`strategy-consulting`, `operations-consulting`, etc.).
 - "Find me three top strategy consultancies in California for a Series-B SaaS"
 - "We need an executive coach for our new CEO"
 - Indirect: "change-management partners for a post-merger integration"
+
+</details>
+
+<details>
+<summary><strong>find-engineering-firm</strong></summary>
+
+Find US **real-world** engineering firms — civil, structural, MEP,
+mechanical, electrical, geotechnical, transportation, environmental,
+manufacturing. Auto-pins `industry:engineering_services`. **NOT for
+software engineering** — defers software-dev / "engineering team" /
+SaaS-architecture asks to `find-software-developer`. Skips residential
+or consumer architecture asks.
+
+**Use when:**
+- "Find civil engineering firms in Florida for transportation infrastructure"
+- "Shortlist three structural engineering firms with high-rise experience"
+- Indirect: "we're building a 10-story office and need a structural engineer
+  to stamp the drawings"
 
 </details>
 
