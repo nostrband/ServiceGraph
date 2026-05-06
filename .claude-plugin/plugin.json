@@ -1,0 +1,25 @@
+{
+  "name": "servicegraph",
+  "version": "0.2.0",
+  "description": "Find, shortlist, vet, and enrich US professional-services firms — law, marketing, consulting, accounting, IT services, engineering, HR, PR, design — via the ServiceGraph API. Ships 13 skills covering the full B2B service-firm catalog.",
+  "author": {
+    "name": "Artur Briugeman",
+    "email": "artur@nostr.band",
+    "url": "https://servicegraph.co"
+  },
+  "repository": "https://github.com/nostrband/servicegraph",
+  "homepage": "https://servicegraph.co",
+  "license": "MIT",
+  "keywords": [
+    "servicegraph",
+    "service-providers",
+    "agencies",
+    "law-firms",
+    "consulting",
+    "accounting",
+    "marketing",
+    "lead-generation",
+    "professional-services",
+    "us-firms"
+  ]
+}
