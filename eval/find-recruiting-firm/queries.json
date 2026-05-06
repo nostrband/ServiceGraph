@@ -1,0 +1,28 @@
+{
+  "version": "1",
+  "skill": "find-recruiting-firm",
+  "split_strategy": "Manual. The dominant failure mode is recruiting-an-employee asks ('hire a recruiter for our team', 'where should I post the role', 'in-house recruiter') sharing strong keyword overlap with B2B procurement positives. Three boundary negatives (N1 in-house engineer hire, N2 candidate-side, N3 in-house recruiter) in train; one (N9 career coaching) held out.",
+  "passing_rule": "should_trigger=true → trigger_rate > 0.5 over 3 runs. should_trigger=false → trigger_rate ≤ 0.5.",
+  "queries": [
+    {"id": "P1", "split": "train", "should_trigger": true, "query": "find me an executive search firm for a CFO search", "notes": "Direct, exec search sub-type."},
+    {"id": "P2", "split": "train", "should_trigger": true, "query": "shortlist three retained-search boutiques in NY focused on tech executives", "notes": "Retained search + location + vertical."},
+    {"id": "P3", "split": "train", "should_trigger": true, "query": "we need RPO support for a 50-engineer hiring push", "notes": "RPO sub-type + volume."},
+    {"id": "P7", "split": "train", "should_trigger": true, "query": "we're scaling fast and need help hiring at scale — looking for a partner", "notes": "HARD: indirect — 'looking for a partner', no 'firm' / 'agency' / 'recruiter'."},
+    {"id": "P9", "split": "train", "should_trigger": true, "query": "compare three executive search firms with at least 4-star ratings and tech-sector experience", "notes": "Quality + sector."},
+    {"id": "P10", "split": "train", "should_trigger": true, "query": "we need contingent staffing support for a Q4 surge", "notes": "Contingent staffing sub-type."},
+    {"id": "P4", "split": "validation", "should_trigger": true, "query": "looking for a tech-recruiting firm to help us scale our engineering org", "notes": "Tech recruiting + scale."},
+    {"id": "P5", "split": "validation", "should_trigger": true, "query": "build a longlist of 20 healthcare staffing firms in the Midwest", "notes": "Healthcare staffing + region."},
+    {"id": "P6", "split": "validation", "should_trigger": true, "query": "we shortlisted 8 staffing firm domains — pull contact info and confirm which do retained search", "notes": "BYO list (enrichment) with sub-type filter."},
+    {"id": "P8", "split": "validation", "should_trigger": true, "query": "find sales recruiting agencies that specialize in SaaS quota carriers", "notes": "Sales recruiting + vertical."},
+    {"id": "N1", "split": "train", "should_trigger": false, "query": "I want to hire a senior backend engineer for our team — where should I post the job?", "notes": "HARD: recruiting-an-employee, NOT a recruiting firm. Strong overlap with positives."},
+    {"id": "N2", "split": "train", "should_trigger": false, "query": "find me a recruiter to represent me as a candidate", "notes": "HARD: candidate-side ask. Recruiter keyword overlap."},
+    {"id": "N3", "split": "train", "should_trigger": false, "query": "I want to hire an in-house recruiter for our team", "notes": "HARD: in-house recruiting hire (recruiting-the-recruiter)."},
+    {"id": "N4", "split": "train", "should_trigger": false, "query": "what's the best ATS — Greenhouse vs Lever?", "notes": "Software-product comparison."},
+    {"id": "N6", "split": "train", "should_trigger": false, "query": "I'm looking for a freelance tech recruiter", "notes": "Individual freelancer."},
+    {"id": "N9", "split": "train", "should_trigger": false, "query": "find me a career coach to help with my job search", "notes": "Consumer/candidate-side career coaching."},
+    {"id": "N5", "split": "validation", "should_trigger": false, "query": "find me a recruiter in London for our UK office", "notes": "Non-US."},
+    {"id": "N7", "split": "validation", "should_trigger": false, "query": "what's the typical fee for an executive search?", "notes": "Market research."},
+    {"id": "N8", "split": "validation", "should_trigger": false, "query": "help me write a job description for a Staff Engineer", "notes": "DIY/do-the-work."},
+    {"id": "N10", "split": "validation", "should_trigger": false, "query": "explain the difference between contingent and retained search", "notes": "Knowledge question."}
+  ]
+}
