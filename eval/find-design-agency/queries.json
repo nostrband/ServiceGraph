@@ -1,0 +1,28 @@
+{
+  "version": "1",
+  "skill": "find-design-agency",
+  "split_strategy": "Manual. Hard cases all in train: N1 (defer to find-marketing-agency for broader marketing scope), N2 (defer to find-web-developer for the build phase), N4 (consumer-personal wedding design — canonical out-of-scope life event), and indirect-intent positive P7. Validation tests generalization across remaining sub-disciplines and out-of-scope shapes.",
+  "passing_rule": "should_trigger=true → trigger_rate > 0.5 over 3 runs. should_trigger=false → trigger_rate ≤ 0.5.",
+  "queries": [
+    {"id": "P1", "split": "train", "should_trigger": true, "query": "find me a UX/UI design agency for our SaaS product", "notes": "Direct, UX/UI sub-service + vertical."},
+    {"id": "P3", "split": "train", "should_trigger": true, "query": "we need a packaging design firm for a CPG launch", "notes": "Packaging + vertical."},
+    {"id": "P4", "split": "train", "should_trigger": true, "query": "looking for a product design consultancy with hardware experience", "notes": "Product/industrial design with hardware specialization."},
+    {"id": "P7", "split": "train", "should_trigger": true, "query": "we need someone to design the visual identity and packaging for our new line of beverages", "notes": "HARD: indirect — describes work, no 'agency'/'firm'/'studio'. Tests describing-design-deliverable triggering."},
+    {"id": "P9", "split": "train", "should_trigger": true, "query": "compare three UX/UI agencies with at least 4-star ratings and Fortune 500 clients", "notes": "Quality + tier."},
+    {"id": "P10", "split": "train", "should_trigger": true, "query": "we need a creative agency for a brand system overhaul — logo, typography, color, voice", "notes": "Full brand-system engagement; tests boundary with marketing-agency since 'creative agency' is shared terminology."},
+    {"id": "P2", "split": "validation", "should_trigger": true, "query": "shortlist three brand-identity studios in NY for our rebrand", "notes": "Brand-identity sub-service + location."},
+    {"id": "P5", "split": "validation", "should_trigger": true, "query": "build a longlist of 25 US design studios specializing in healthcare-tech UX", "notes": "Longlist scale + vertical."},
+    {"id": "P6", "split": "validation", "should_trigger": true, "query": "we shortlisted 10 design studio domains — pull contact info and confirm which specialize in motion design", "notes": "BYO list (enrichment) using the proven 'specialize in' phrasing."},
+    {"id": "P8", "split": "validation", "should_trigger": true, "query": "find graphic design firms experienced with annual reports and investor decks", "notes": "Graphic-design + corporate-communications use case."},
+    {"id": "N1", "split": "train", "should_trigger": false, "query": "find me a marketing agency to handle our brand and demand-gen", "notes": "HARD: broader marketing scope — defer to find-marketing-agency."},
+    {"id": "N2", "split": "train", "should_trigger": false, "query": "we need a web developer to build the new site after the design is done", "notes": "HARD: build phase — defer to find-web-developer. The 'after the design is done' framing should distinguish this from a design ask."},
+    {"id": "N3", "split": "train", "should_trigger": false, "query": "I want to hire an in-house design lead for our team", "notes": "Recruiting an employee."},
+    {"id": "N4", "split": "train", "should_trigger": false, "query": "I need a designer to make wedding invitations for our wedding next month", "notes": "HARD: consumer-personal life event — canonical out-of-scope. Catalog is B2B-only."},
+    {"id": "N5", "split": "train", "should_trigger": false, "query": "what's the best design tool — Figma vs Sketch vs Adobe XD?", "notes": "Software-product comparison."},
+    {"id": "N7", "split": "train", "should_trigger": false, "query": "I'm looking for a freelance designer for a one-off illustration", "notes": "Individual freelancer + one-off scope."},
+    {"id": "N6", "split": "validation", "should_trigger": false, "query": "find me a design agency in Tokyo for our Japan launch", "notes": "Non-US."},
+    {"id": "N8", "split": "validation", "should_trigger": false, "query": "explain the difference between UX and UI", "notes": "Knowledge question."},
+    {"id": "N9", "split": "validation", "should_trigger": false, "query": "what's the typical cost of a brand identity project?", "notes": "Market research."},
+    {"id": "N10", "split": "validation", "should_trigger": false, "query": "review my Figma file and tell me how to improve the layout", "notes": "DIY/feedback task with design keyword overlap."}
+  ]
+}
