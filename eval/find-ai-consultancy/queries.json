@@ -1,0 +1,28 @@
+{
+  "version": "1",
+  "skill": "find-ai-consultancy",
+  "split_strategy": "Manual. Hard cases all in train: N1 (defer to find-software-developer for general dev — bidirectional pair test against find-software-developer's N2), N2 (LLM-product comparison with strong vendor-name overlap), N5 (consumer ed-tech — the failure mode that originally deferred this skill in plan.md), and indirect-intent positive P7. Validation tests generalization across remaining sub-niches and out-of-scope shapes.",
+  "passing_rule": "should_trigger=true → trigger_rate > 0.5 over 3 runs. should_trigger=false → trigger_rate ≤ 0.5.",
+  "queries": [
+    {"id": "P1", "split": "train", "should_trigger": true, "query": "find me an AI/ML consultancy to build our recommendation engine for an ecommerce site", "notes": "Direct, clear AI/ML deliverable. Mirror of find-software-developer's N2 — should fire HERE, not there."},
+    {"id": "P3", "split": "train", "should_trigger": true, "query": "we need a data-engineering partner to build our analytics pipelines", "notes": "Data-engineering sub-area."},
+    {"id": "P4", "split": "train", "should_trigger": true, "query": "looking for an MLOps consultancy to help us deploy models to production", "notes": "MLOps sub-niche."},
+    {"id": "P7", "split": "train", "should_trigger": true, "query": "we want to use AI to predict customer churn — who can help us build that?", "notes": "HARD: indirect — describes outcome, no 'AI consultancy' / 'ML firm'. Tests outcome-language triggering."},
+    {"id": "P9", "split": "train", "should_trigger": true, "query": "compare three AI/ML consulting firms with at least 4-star ratings and Fortune 500 clients", "notes": "Quality + client tier."},
+    {"id": "P10", "split": "train", "should_trigger": true, "query": "we need help building a custom LLM agent for our customer-service workflows", "notes": "Agentic AI sub-niche."},
+    {"id": "P2", "split": "validation", "should_trigger": true, "query": "shortlist three RAG/LLM consultancies for an enterprise chatbot project", "notes": "RAG/LLM modern AI sub-niche."},
+    {"id": "P5", "split": "validation", "should_trigger": true, "query": "build a longlist of 25 US AI consultancies specializing in computer vision for healthcare", "notes": "Computer vision + vertical."},
+    {"id": "P6", "split": "validation", "should_trigger": true, "query": "we shortlisted 8 AI/ML consultancy domains — pull contact info and confirm which specialize in generative AI", "notes": "BYO list (enrichment) with sub-niche filter. Original wording used 'do generative AI' which read ambiguously between procurement and knowledge intent; reworded to 'specialize in' to match the proven pattern from find-marketing-agency P6 and find-cpa-firm P6 ('confirm which serve X')."},
+    {"id": "P8", "split": "validation", "should_trigger": true, "query": "find NLP consultancies experienced with document understanding and IDP", "notes": "NLP + IDP sub-niche."},
+    {"id": "N1", "split": "train", "should_trigger": false, "query": "find me a software dev shop to build our React app", "notes": "HARD: general software dev — should defer to find-software-developer. Bidirectional sibling-coordination test."},
+    {"id": "N2", "split": "train", "should_trigger": false, "query": "what's the best LLM — ChatGPT vs Claude vs Gemini?", "notes": "HARD: LLM-product comparison with strong vendor-name overlap."},
+    {"id": "N3", "split": "train", "should_trigger": false, "query": "I want to hire an in-house Machine Learning Engineer", "notes": "Recruiting an employee."},
+    {"id": "N4", "split": "train", "should_trigger": false, "query": "how do I fine-tune a Llama model on my dataset?", "notes": "DIY/code task."},
+    {"id": "N5", "split": "train", "should_trigger": false, "query": "find me an online course to learn AI/ML", "notes": "HARD: consumer ed-tech — the failure mode that deferred this skill originally. Critical to hold at 0/3."},
+    {"id": "N9", "split": "train", "should_trigger": false, "query": "what's the typical day rate for an ML consultant?", "notes": "Market research."},
+    {"id": "N6", "split": "validation", "should_trigger": false, "query": "find an AI consultancy in Bangalore for our data project", "notes": "Non-US."},
+    {"id": "N7", "split": "validation", "should_trigger": false, "query": "I'm looking for a freelance ML engineer for a one-off model", "notes": "Individual freelancer."},
+    {"id": "N8", "split": "validation", "should_trigger": false, "query": "explain how transformers work", "notes": "Knowledge question."},
+    {"id": "N10", "split": "validation", "should_trigger": false, "query": "review this Python script that trains a neural network", "notes": "DIY code review with ML keyword overlap."}
+  ]
+}
