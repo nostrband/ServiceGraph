@@ -87,8 +87,10 @@ content-led, local, ecommerce, B2B SEO, audits. Auto-pins
 <summary><strong>find-software-developer</strong></summary>
 
 Find US software development firms — custom software, web/mobile development,
-backend/API, DevOps, cloud consulting, system integration, hosting, managed
-IT. Auto-pins `industry:it_services`.
+backend/API, DevOps/cloud consulting, system integration, hosting. Auto-pins
+`industry:it_services`. Defers to `find-web-developer` for strictly
+website/landing-page projects, and to dedicated AI/ML routes for
+modeling-only work.
 
 **Use when:**
 - "Find me a software dev shop in Austin"
@@ -97,13 +99,122 @@ IT. Auto-pins `industry:it_services`.
 
 </details>
 
-### Coming soon
+<details>
+<summary><strong>find-web-developer</strong></summary>
 
-Industry-specific skills are rolling out to bring the catalog's 22 industries
-to first-class coverage — `find-web-developer`, `find-law-firm`,
-`find-consulting-firm`, `find-accounting-firm`, `find-pr-agency`, and more.
-Until they ship, the umbrella `find-service-providers` skill handles every
-industry through the same DSL.
+Find US web development firms — building, refreshing, or rebuilding
+websites: marketing sites, landing pages, ecommerce, WordPress/Webflow/
+Shopify, headless CMS, microsites, web frontend. Auto-pins
+`industry:it_services service_provided:web-development`. Defers to
+`find-software-developer` for backend/API/mobile work, and to
+`find-marketing-agency` when scope spans broader marketing.
+
+**Use when:**
+- "Find a web developer for our marketing landing page"
+- "Shortlist three Webflow agencies in California"
+- "Rebuild our ecommerce site on Shopify with custom theme work"
+
+</details>
+
+<details>
+<summary><strong>find-law-firm</strong></summary>
+
+Find US **B2B** law firms — corporate, IP/patent, M&A and securities,
+employment, commercial litigation, regulatory/compliance, data privacy/
+cyber, real estate, tax. Auto-pins `industry:legal`. The catalog is
+B2B-only — consumer-personal matters (divorce, personal injury, criminal
+defense, estate planning, family law, wills) are explicitly out of scope.
+
+**Use when:**
+- "Find three boutique IP law firms in California for patent prosecution"
+- "Shortlist M&A counsel for a Series-B fundraise"
+- Indirect: "outside counsel for GDPR / SOC 2 oversight"
+
+</details>
+
+<details>
+<summary><strong>find-cpa-firm</strong></summary>
+
+Find US accounting and tax firms (CPA firms) — financial-statement audit,
+SOC 1/2, corporate tax, bookkeeping for businesses, advisory/fractional
+CFO, M&A diligence, 409A valuations, R&D tax credits, IPO readiness,
+sales-and-use tax. Auto-pins `industry:accounting_tax`. B2B-only —
+personal tax prep (1040, individual estate, retirement planning) is
+out of scope.
+
+**Use when:**
+- "Find me a CPA firm for our Delaware C-corp Series A audit"
+- "Shortlist three audit firms with SaaS experience"
+- Indirect: "our books are a mess and we need someone to clean them up
+  before the audit"
+
+</details>
+
+<details>
+<summary><strong>find-management-consultant</strong></summary>
+
+Find US management consultancies — strategy, operations, executive
+coaching, leadership development, org-development/change management,
+PMO/program management, sales/revenue ops. Auto-pins
+`industry:management_consulting` and uses the `service_provided`
+sub-tags (`strategy-consulting`, `operations-consulting`, etc.).
+
+**Use when:**
+- "Find me three top strategy consultancies in California for a Series-B SaaS"
+- "We need an executive coach for our new CEO"
+- Indirect: "change-management partners for a post-merger integration"
+
+</details>
+
+<details>
+<summary><strong>find-recruiting-firm</strong></summary>
+
+Find US recruiting and staffing firms — executive search/retained search,
+RPO, tech/sales/healthcare recruiting, contingent/contract staffing, temp
+staffing. Auto-pins `industry:hr_recruiting_staffing`. **Procures an
+external recruiting firm** — does NOT fire on recruiting-an-employee
+asks ("hire a recruiter for our team", "where should I post the job"),
+candidate-side asks, or in-house recruiter hires.
+
+**Use when:**
+- "Find me an executive search firm for a CFO search"
+- "We need RPO support for a 50-engineer hiring push"
+- Indirect: "we're scaling fast and need help hiring at scale"
+
+</details>
+
+<details>
+<summary><strong>find-pr-agency</strong></summary>
+
+Find US public-relations and communications agencies — media relations,
+crisis comms, investor relations (IR), product-launch PR, tech/startup
+PR, healthcare PR, B2B PR, public affairs, brand reputation, internal
+communications. Auto-pins `industry:pr_comms`. Defers to
+`find-marketing-agency` when scope spans broader marketing beyond
+PR/comms.
+
+**Use when:**
+- "Find me a tech PR agency in NY for our Series-B announcement"
+- "Three IR firms for our upcoming IPO roadshow"
+- Indirect: "we need press — get us into TechCrunch, WSJ, the trade press"
+
+</details>
+
+<details>
+<summary><strong>find-cybersecurity-firm</strong></summary>
+
+Find US cybersecurity firms — pen-testing/red team, security audits,
+vCISO, SOC 2 readiness, incident response, managed SOC, IAM, cloud
+security, AppSec. Auto-pins the cybersecurity industry tag. B2B-only
+— consumer-personal cybersecurity ("my Gmail got hacked", "secure my
+home wifi") is out of scope.
+
+**Use when:**
+- "Find me a pen-testing firm for our SOC 2 audit"
+- "We need an incident response retainer"
+- Indirect: "we got hit with ransomware last week — we need help fast"
+
+</details>
 
 ## Prefer MCP? Use the hosted server.
 
