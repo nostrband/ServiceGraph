@@ -58,11 +58,6 @@ For the **anonymous** tier (`/tags`, `/check`, `/explore`), MCP is
 anonymous tier), so plain curl against the REST URL is the simpler
 path for discovery calls. Use the REST patterns below for those.
 
-Install (one-time, per harness):
-
-- Claude Code: `claude mcp add --transport http servicegraph https://mcp.servicegraph.co`
-- Cursor / Codex / ChatGPT Connectors: paste `https://mcp.servicegraph.co` as the server URL.
-
 The MCP tools 1:1-map to the public REST endpoints — same backend,
 same quota, same data:
 
