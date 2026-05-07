@@ -34,6 +34,44 @@ catalog with a broader filter and won't over-constrain on SEO.
 If the user wants strictly web/app development (build a site, ship
 a feature), defer to `find-web-developer` / `find-software-developer`.
 
+## MCP server (preferred for authed calls)
+
+If your agent harness has the **ServiceGraph MCP server** loaded
+(`https://mcp.servicegraph.co`), prefer its tools for the **authed**
+tier (`/search`, `/get`, `/stats`). The MCP server uses OAuth 2.1 +
+PKCE — the host harness handles credentials in its own audited
+sandbox, so there's no `.env.local`, no shell dispatch, and no token
+value ever enters the LLM context.
+
+For the **anonymous** tier (`/tags`, `/check`, `/explore`), MCP is
+**not** preferred — every MCP tool requires OAuth (the server has no
+anonymous tier), so plain curl against the REST URL is the simpler
+path for discovery calls. Use the REST patterns below for those.
+
+Install (one-time, per harness):
+
+- Claude Code: `claude mcp add --transport http servicegraph https://mcp.servicegraph.co`
+- Cursor / Codex / ChatGPT Connectors: paste `https://mcp.servicegraph.co` as the server URL.
+
+The MCP tools 1:1-map to the public REST endpoints — same backend,
+same quota, same data:
+
+| MCP tool | REST endpoint | Anon? | Recommended path |
+|---|---|---|---|
+| `list_tags` | `GET /v1/tags` | yes | curl |
+| `check_filter` | `GET /v1/check` | yes | curl |
+| `explore_firms` | `GET /v1/explore` | yes | curl |
+| `search_firms` | `GET /v1/search` | no | MCP if loaded, else curl + OTP |
+| `get_firm` | `GET /v1/get/:id` | no | MCP if loaded, else curl + OTP |
+| `catalog_stats` | `GET /v1/stats` | no | MCP if loaded, else curl + OTP |
+
+**Detection**: if you see any MCP tools with `servicegraph` in the
+name (the harness-specific prefix varies — agents pattern-match the
+substring), the ServiceGraph MCP server is loaded. Prefer those
+tools for the authed tier; complete any auth flow the harness
+initiates if needed. If no `servicegraph` MCP tools are present,
+fall through to the REST + OTP flow below for the authed tier.
+
 ## The four-tier funnel
 
 | Tier | Auth | Cost | Use it for |
