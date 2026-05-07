@@ -75,52 +75,85 @@ Field kinds you'll use most:
 `/tags`, `/check`, and `/explore` are anonymous. `/search` and `/get`
 require a bearer token.
 
-**Resolution rule** — try these sources in order before triggering OTP:
+**Security model — keep the token out of the LLM context.**
 
-1. **Shell environment**: `$SERVICEGRAPH_TOKEN`. Most agent harnesses
-   only inherit explicit `export`s, not dotenv files — so this catches
-   the case where the user has it exported in `~/.bashrc` / `~/.zshrc`.
+- **Never** read `.env`, `.env.local`, or any other credential file
+  into your context. The token's literal value should never appear
+  in the conversation.
+- Use shell dispatch for every authed request so the token flows
+  directly from the user's environment / dotenv file into the
+  `Authorization` header without round-tripping through the LLM.
+- **Always ask the user once per session** before using a detected
+  token, even if it's already in their shell or `.env.local`.
 
-2. **Project dotenv files**: read `.env.local` then `.env` in the
-   current working directory and look for a `SERVICEGRAPH_TOKEN=…`
-   line. **This is the common case the agent will miss otherwise** —
-   users frequently put the token in `.env.local` (gitignored) and
-   expect it to "just work," but Claude Code and similar harnesses
-   don't auto-load dotenv files. If you find it, use it; don't ask.
+**Resolution rule**:
 
-If found in any of the above, set
-`Authorization: Bearer <token>` on every authed request and skip OTP.
+1. **Detect** whether a token is available — without reading its
+   value. Run a shell check that only inspects exit codes:
 
-3. **Otherwise, walk the user through OTP** (one-time, ~30 s):
-   - Ask the user for their email address.
-   - `POST /v1/auth/request-otp` with `{"email": "..."}`. Returns 204; a
-     6-digit code lands in their inbox.
-   - Ask the user to paste the code.
-   - `POST /v1/auth/verify-otp` with `{"email": "...", "code": "...",
-     "name": "<a label like claude-cli>"}`. Returns
-     `{"token": "vk_...", "expires_at": "...", "user": {...}}`.
-   - Use that token for the rest of the session.
-   - Tell the user: *"Save this as `SERVICEGRAPH_TOKEN` to skip this
-     step next time — either `export SERVICEGRAPH_TOKEN=…` in your
-     shell rc, or add `SERVICEGRAPH_TOKEN=…` to a `.env.local` file in
-     your project (gitignored). The token is shown once and lasts 90
-     days."*
+   ```bash
+   ( [ -n "${SERVICEGRAPH_TOKEN:-}" ] \
+     || grep -qs '^SERVICEGRAPH_TOKEN=' .env.local \
+     || grep -qs '^SERVICEGRAPH_TOKEN=' .env )
+   ```
 
-If a `/search` or `/get` returns 401 mid-session, the token expired or
-was revoked — re-run the OTP flow.
+   Exit code `0` = token is available somewhere; non-zero = no token.
 
-```bash
-# 1. trigger the email
-curl -X POST 'https://api.servicegraph.co/v1/auth/request-otp' \
-  -H 'Content-Type: application/json' \
-  -d '{"email":"you@example.com"}'
+2. **Confirm with the user** before the first authed call this session:
 
-# 2. exchange the code
-curl -X POST 'https://api.servicegraph.co/v1/auth/verify-otp' \
-  -H 'Content-Type: application/json' \
-  -d '{"email":"you@example.com","code":"123456","name":"my-cli"}'
-# → { "token": "vk_…", "expires_at": "...", "user": {...} }
-```
+   > "I found a `SERVICEGRAPH_TOKEN` in your environment / `.env.local`.
+   > OK to use it for ServiceGraph API requests this session?"
+
+   If the user says no, stay on the anonymous tiers (`/tags`, `/check`,
+   `/explore`) and skip authed calls. Don't re-ask later unless the
+   user asks for authed work.
+
+3. **Dispatch via shell** — every authed call goes through a shell
+   wrapper so the literal token never enters the conversation:
+
+   ```bash
+   # If exported in the shell environment:
+   curl -H "Authorization: Bearer $SERVICEGRAPH_TOKEN" \
+        'https://api.servicegraph.co/v1/search?filter=...'
+
+   # If in .env.local — source it inside a subshell so it doesn't
+   # leak into the parent shell either:
+   ( set -a; . ./.env.local; set +a;
+     curl -H "Authorization: Bearer $SERVICEGRAPH_TOKEN" \
+          'https://api.servicegraph.co/v1/search?filter=...' )
+   ```
+
+   Capture the response body to a tmp file or jq-process it, but do
+   NOT echo the request command with the token expanded.
+
+4. **OTP flow** if no token is detected — capture the new token
+   directly into `.env.local` without surfacing its value to the LLM:
+
+   ```bash
+   # 1. trigger the email — agent prompts the user for $EMAIL
+   curl -sX POST 'https://api.servicegraph.co/v1/auth/request-otp' \
+     -H 'Content-Type: application/json' \
+     -d "{\"email\":\"$EMAIL\"}"
+
+   # 2. exchange the code — agent prompts the user for $CODE — and
+   #    pipe the response straight into .env.local. Use jq to extract
+   #    only the token field; do NOT cat / echo the response.
+   curl -sX POST 'https://api.servicegraph.co/v1/auth/verify-otp' \
+     -H 'Content-Type: application/json' \
+     -d "{\"email\":\"$EMAIL\",\"code\":\"$CODE\",\"name\":\"claude-cli\"}" \
+   | jq -r 'select(.token) | "SERVICEGRAPH_TOKEN=" + .token' \
+     >> .env.local
+
+   # 3. confirm capture without revealing the value
+   grep -q '^SERVICEGRAPH_TOKEN=' .env.local && echo "OTP token captured."
+   ```
+
+   After a successful capture, the user has implicitly consented
+   (they just completed the flow), so proceed to dispatch (step 3).
+   The token is now persistent in `.env.local` for future sessions.
+
+5. If a `/search` or `/get` returns `401 unauthorized` mid-session,
+   the token expired or was revoked — re-run the OTP flow.
 
 ## Filter DSL
 
