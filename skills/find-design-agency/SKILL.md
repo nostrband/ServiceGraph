@@ -159,17 +159,19 @@ require a bearer token.
 
    ```bash
    # 1. trigger the email — agent prompts the user for $EMAIL
-   curl -sX POST 'https://api.servicegraph.co/v1/auth/request-otp' \
+   curl -fsS -X POST 'https://api.servicegraph.co/v1/auth/request-otp' \
      -H 'Content-Type: application/json' \
      -d "{\"email\":\"$EMAIL\"}"
 
-   # 2. exchange the code — agent prompts the user for $CODE — and
-   #    pipe the response straight into .env.local. Use jq to extract
-   #    only the token field; do NOT cat / echo the response.
-   curl -sX POST 'https://api.servicegraph.co/v1/auth/verify-otp' \
+   # 2. exchange the code — agent prompts the user for $CODE.
+   #    The ?format=env query param returns SERVICEGRAPH_TOKEN=<token>
+   #    as plain text appended to .env.local — no jq needed. The -f
+   #    flag makes curl exit non-zero on 4xx so a wrong code doesn't
+   #    pollute the file (the error mirror is also a `# comment` line,
+   #    safe to ignore even if it lands).
+   curl -fsS -X POST 'https://api.servicegraph.co/v1/auth/verify-otp?format=env' \
      -H 'Content-Type: application/json' \
      -d "{\"email\":\"$EMAIL\",\"code\":\"$CODE\",\"name\":\"claude-cli\"}" \
-   | jq -r 'select(.token) | "SERVICEGRAPH_TOKEN=" + .token' \
      >> .env.local
 
    # 3. confirm capture without revealing the value
