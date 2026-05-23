@@ -4,26 +4,28 @@ description: Use whenever the user wants to find, shortlist, vet, or enrich US m
 license: MIT
 metadata:
   api_base: https://api.servicegraph.co
+  dataset_id: pro_services
   industry: marketing_agency
-  version: "0.3"
+  version: "0.4"
 ---
 
 # find-marketing-agency
 
 Drive the **ServiceGraph API** (`https://api.servicegraph.co`) to find,
-shortlist, and enrich US marketing agencies. The catalog has tens of
-thousands of US marketing firms tagged across 26 service sub-tags
-including branding, content-marketing, ppc, social-media-marketing,
-email-marketing, web-design, video-production, inbound-marketing,
-marketing-strategy, and conversion-optimization. (Note: the catalog has no
-`performance-marketing` or `demand-gen` / `demand-generation` tag —
-those user-phrasings map to `inbound-marketing` /
-`marketing-strategy` / `conversion-optimization` plus a keyword
-fallback.)
+shortlist, and enrich US marketing agencies via the `pro_services`
+dataset. The catalog has tens of thousands of US marketing firms
+tagged across ~26 service sub-tags including `branding`,
+`content-marketing`, `ppc`, `social-media-marketing`, `email-marketing`,
+`web-design`, `video-production`, `inbound-marketing`,
+`marketing-strategy`, `conversion-optimization`, and
+`ecommerce-marketing`. (Note: there is no `performance-marketing` or
+`demand-gen` / `demand-generation` tag — those user-phrasings map to
+`inbound-marketing` / `marketing-strategy` / `conversion-optimization`
+plus a keyword fallback.)
 
-**Always pin `industry:marketing_agency` in the filter.** This skill
-exists to do that automatically — the user shouldn't have to think
-about catalog taxonomy.
+**Always pin `industry:marketing_agency`.** This skill exists to do
+that automatically — the user shouldn't have to think about catalog
+taxonomy.
 
 Any HTTP client works (curl, fetch, requests). Examples below use curl.
 
@@ -43,169 +45,62 @@ tags.
 
 ## MCP server (preferred for authed calls)
 
-If your agent harness has the **ServiceGraph MCP server** loaded
-(`https://mcp.servicegraph.co`), prefer its tools for the **authed**
-tier (`/search`, `/get`, `/stats`). The MCP server uses OAuth 2.1 +
-PKCE — the host harness handles credentials in its own audited
-sandbox, so there's no `.env.local`, no shell dispatch, and no token
-value ever enters the LLM context.
+If your harness has the ServiceGraph MCP server loaded (recognizable
+by tool names containing `servicegraph`), prefer those tools — the
+harness handles credentials in its own sandbox via OAuth 2.1 + PKCE,
+so no token enters LLM context. Otherwise use the REST flow below.
 
-For the **anonymous** tier (`/tags`, `/check`, `/explore`), MCP is
-**not** preferred — every MCP tool requires OAuth (the server has no
-anonymous tier), so plain curl against the REST URL is the simpler
-path for discovery calls. Use the REST patterns below for those.
+## API surface (dataset id: `pro_services`)
 
-The MCP tools 1:1-map to the public REST endpoints — same backend,
-same quota, same data:
+Every endpoint requires the bearer (`Authorization: Bearer vk_…`).
+There is no anonymous tier.
 
-| MCP tool | REST endpoint | Anon? | Recommended path |
-|---|---|---|---|
-| `list_tags` | `GET /v1/tags` | yes | curl |
-| `check_filter` | `GET /v1/check` | yes | curl |
-| `explore_firms` | `GET /v1/explore` | yes | curl |
-| `search_firms` | `GET /v1/search` | no | MCP if loaded, else curl + OTP |
-| `get_firm` | `GET /v1/get/:id` | no | MCP if loaded, else curl + OTP |
-| `catalog_stats` | `GET /v1/stats` | no | MCP if loaded, else curl + OTP |
+| Endpoint | Cost | Use it for |
+|---|---|---|
+| `GET /v1/datasets/pro_services/fields[?include_values=1&q=]` | free | Filter-field catalog + DSL grammar. Call first per session. |
+| `GET /v1/datasets/pro_services/values/:field[?q=&limit=]` | free | Enumerate values for one field. |
+| `GET /v1/datasets/pro_services/check?filter=…` | free | Validate a filter. Returns `{valid, normalized}` or `{valid:false, error}`. |
+| `POST /v1/datasets/pro_services/translate-intent` | free | `{intent}` → LLM-generated DSL filter + sanity count. |
+| `GET /v1/datasets/pro_services/search?filter=…&limit=&offset=` | free | Brief firm cards + per-row `unlock` hint + `total`. |
+| `GET /v1/datasets/pro_services/:apex` | free | Single row brief; **detail block only if unlocked**. |
+| `POST /v1/datasets/pro_services/unlocks` | **10 credits / firm** | `{apexes:[...]}` ≤100. Atomic batch; 30-day TTL on detail; `was_cached:true` rows free. |
+| `GET /v1/me/credits` | free | Balance. |
 
-**Detection**: if you see any MCP tools with `servicegraph` in the
-name (the harness-specific prefix varies — agents pattern-match the
-substring), the ServiceGraph MCP server is loaded. Prefer those
-tools for the authed tier; complete any auth flow the harness
-initiates if needed. If no `servicegraph` MCP tools are present,
-fall through to the REST + OTP flow below for the authed tier.
-
-## The four-tier funnel
-
-| Tier | Auth | Cost | Use it for |
-|---|---|---|---|
-| `GET /v1/tags` | none | free | **First call of every session.** Discover legal field names, kinds, operators, values. |
-| `GET /v1/check?filter=...` | none | free | Validate a filter before spending an explore/search call. |
-| `GET /v1/explore?filter=...` | none | free, IP-throttled | Scope: count + breakdowns. Use to size the candidate pool before quota-spending. |
-| `GET /v1/search?filter=...` | bearer | 200 unique firms / month free | Brief firm cards. **No url, no contact info.** Use for ranking / shortlisting. |
-| `GET /v1/get/:id` | bearer | 50 unique firms / month free | Full bundle: url, phone, email, social, legal name, address. **Only call for shortlisted firms.** |
-| `POST /v1/research` | paid | not in MVP | Deferred — skip. |
-
-**Quota rule that matters**: `/search` and `/get` charge per *unique
-firm viewed per calendar month*, not per call. Re-paging the same
-query is free. Two different filters that overlap charge once for
-the overlap. Re-fetching a firm you already pulled this month is free.
-
-## Session-start ritual
-
-Before constructing any filter, call:
-
-```
-GET https://api.servicegraph.co/v1/tags?include_values=1
-```
-
-Cache the response for the conversation. Confirm the marketing-relevant
-service tags exist in the returned `service_provided` taxonomy
-(branding, content-marketing, ppc, social-media-marketing,
-email-marketing, video-production, inbound-marketing,
-marketing-strategy, conversion-optimization, etc.) — names drift, and the parser
-silently accepts unknown tags and returns zero results. Common
-mis-mappings: there is no `performance-marketing`,
-`demand-gen`, or `demand-generation` tag — use `inbound-marketing` /
-`marketing-strategy` / `conversion-optimization` plus a keyword
-fallback.
-
-Field kinds you'll use most:
-- **categorical**: `industry` (always `marketing_agency`), `state`, `pricing_model`, `company_size_signal`, `geography_served` — op `:`
-- **tag_set_with_evidence**: `service_provided` — Map<tag, evidence∈{low,medium,high}>. Op `:` with optional `@evidence`
-- **numeric**: `rating`, `review_count_total`, `founded_year` — ops `= >= <= > <`
-- **presence**: `has:phone`, `has:clutch`, `has:rating`, `has:linkedin_company`, …
-- **keyword**: free-text substring across firm name / brand / title / meta / legal_name. Any bareword in the filter becomes a keyword.
+**Cost model.** Discovery / validation / search / brief reads are
+free. Detail (url, phone, email, social, address, full `platforms`
+map) costs **10 credits per firm** and lasts **30 days**. Re-fetching
+an unlocked firm within TTL is free.
 
 ## Auth
 
-`/tags`, `/check`, and `/explore` are anonymous. `/search` and `/get`
-require a bearer token.
+Tokens are `vk_*` API keys minted in the dashboard.
 
-**Security model — keep the token out of the LLM context.**
+**Keep the token out of the LLM context** — never read `.env*` into
+your context; dispatch every authed call through a shell wrapper.
 
-- **Never** read `.env`, `.env.local`, or any other credential file
-  into your context. The token's literal value should never appear
-  in the conversation.
-- Use shell dispatch for every authed request so the token flows
-  directly from the user's environment / dotenv file into the
-  `Authorization` header without round-tripping through the LLM.
-- **Always ask the user once per session** before using a detected
-  token, even if it's already in their shell or `.env.local`.
-
-**Resolution rule**:
-
-1. **Detect** whether a token is available — without reading its
-   value. Run a shell check that only inspects exit codes:
+1. **Just try the call** through a shell wrapper that sources
+   `.env.local`:
 
    ```bash
-   ( [ -n "${SERVICEGRAPH_TOKEN:-}" ] \
-     || grep -qs '^SERVICEGRAPH_TOKEN=' .env.local \
-     || grep -qs '^SERVICEGRAPH_TOKEN=' .env )
+   ( set -a; [ -f .env.local ] && . ./.env.local; set +a;
+     curl -sS -H "Authorization: Bearer $SERVICEGRAPH_API_KEY" \
+          'https://api.servicegraph.co/v1/datasets/pro_services/fields' )
    ```
 
-   Exit code `0` = token is available somewhere; non-zero = no token.
+2. **On `401 unauthorized`**, prompt the user (don't accept the key in chat):
 
-2. **Confirm with the user** before the first authed call this session:
+   > "Open **https://servicegraph.co/profile/api-keys**, sign in,
+   > click **Create key**, and copy the `vk_…` value. Then add
+   > `SERVICEGRAPH_API_KEY=vk_…` to `.env.local` here (or export it
+   > in your shell). Tell me when done. Please don't paste the key
+   > into chat."
 
-   > "I found a `SERVICEGRAPH_TOKEN` in your environment / `.env.local`.
-   > OK to use it for ServiceGraph API requests this session?"
-
-   If the user says no, stay on the anonymous tiers (`/tags`, `/check`,
-   `/explore`) and skip authed calls. Don't re-ask later unless the
-   user asks for authed work.
-
-3. **Dispatch via shell** — every authed call goes through a shell
-   wrapper so the literal token never enters the conversation:
-
-   ```bash
-   # If exported in the shell environment:
-   curl -H "Authorization: Bearer $SERVICEGRAPH_TOKEN" \
-        'https://api.servicegraph.co/v1/search?filter=...'
-
-   # If in .env.local — source it inside a subshell so it doesn't
-   # leak into the parent shell either:
-   ( set -a; . ./.env.local; set +a;
-     curl -H "Authorization: Bearer $SERVICEGRAPH_TOKEN" \
-          'https://api.servicegraph.co/v1/search?filter=...' )
-   ```
-
-   Capture the response body to a tmp file or jq-process it, but do
-   NOT echo the request command with the token expanded.
-
-4. **OTP flow** if no token is detected — capture the new token
-   directly into `.env.local` without surfacing its value to the LLM:
-
-   ```bash
-   # 1. trigger the email — agent prompts the user for $EMAIL
-   curl -fsS -X POST 'https://api.servicegraph.co/v1/auth/request-otp' \
-     -H 'Content-Type: application/json' \
-     -d "{\"email\":\"$EMAIL\"}"
-
-   # 2. exchange the code — agent prompts the user for $CODE.
-   #    The ?format=env query param returns SERVICEGRAPH_TOKEN=<token>
-   #    as plain text appended to .env.local — no jq needed. The -f
-   #    flag makes curl exit non-zero on 4xx so a wrong code doesn't
-   #    pollute the file (the error mirror is also a `# comment` line,
-   #    safe to ignore even if it lands).
-   curl -fsS -X POST 'https://api.servicegraph.co/v1/auth/verify-otp?format=env' \
-     -H 'Content-Type: application/json' \
-     -d "{\"email\":\"$EMAIL\",\"code\":\"$CODE\",\"name\":\"claude-cli\"}" \
-     >> .env.local
-
-   # 3. confirm capture without revealing the value
-   grep -q '^SERVICEGRAPH_TOKEN=' .env.local && echo "OTP token captured."
-   ```
-
-   After a successful capture, the user has implicitly consented
-   (they just completed the flow), so proceed to dispatch (step 3).
-   The token is now persistent in `.env.local` for future sessions.
-
-5. If a `/search` or `/get` returns `401 unauthorized` mid-session,
-   the token expired or was revoked — re-run the OTP flow.
+3. **Retry** the same call after the user signals ready. A later 401
+   means the key was rotated/revoked — re-prompt.
 
 ## Filter DSL
 
-One query parameter, GitHub-search-style.
+GitHub-search-style.
 
 ```
 filter   := orExpr
@@ -223,18 +118,12 @@ bareword := IDENT | NUMBER          # → keyword:<bareword>
 
 **Four rules that bite:**
 
-1. **AND binds tighter than OR.** `a OR b c` parses as `a OR (b AND c)`.
-   Use parens.
-2. **Comma list = OR within one predicate.** `state:CA,NY,TX` matches
-   any of the three.
-3. **Negation is `-x` or `NOT x`.** Negative literals inside a comma
-   list are **not** allowed: `state:CA,-NY` is rejected. Use
-   `state:CA -state:NY`.
-4. **Bareword = keyword search.** Any IDENT or NUMBER not followed by
-   an operator becomes a free-text substring across name / brand /
-   title / meta / legal_name. Multiple barewords AND.
+1. **AND binds tighter than OR.** `a OR b c` parses as `a OR (b AND c)`. Use parens.
+2. **Comma list = OR within one predicate.** `state:CA,NY,TX` = any of three.
+3. **Negation is `-x` or `NOT x`.** `state:CA,-NY` is rejected; use `state:CA -state:NY`.
+4. **Bareword = keyword search.** Free-text substring across name / brand / title / meta / legal_name. Multiple barewords AND. Wrap multi-word phrases in double quotes (`keyword:"foo bar"`).
 
-**Marketing-flavored examples** (validate yours with `/v1/check`):
+**Marketing-flavored examples** (validate yours with `/check`):
 
 ```
 industry:marketing_agency service_provided:branding@high
@@ -246,32 +135,11 @@ industry:marketing_agency rating>=4 review_count_total>=20 has:clutch
 industry:marketing_agency NOT (service_provided:seo OR service_provided:web-development)
 ```
 
-When in doubt about whether a filter parses, hit `/v1/check?filter=...`
-first — it's free and returns the canonical normalized form.
+## Identifying firms — `apex`
 
-## firm_id contract
-
-`firm_id` is a stable 12-hex-char handle:
-
-```
-firm_id = sha256(apex.lower().rstrip(".")).hexdigest()[:12]
-```
-
-`apex` is the registered domain (`ogilvy.com`, not
-`www.ogilvy.com/about`). Anyone with an apex list can compute firm_ids
-locally and call `/v1/get/:id` directly — no `/search` needed for BYO
-enrichment.
-
-```python
-import hashlib
-def firm_id(apex):
-    return hashlib.sha256(apex.lower().rstrip(".").encode()).hexdigest()[:12]
-```
-
-```bash
-echo -n "ogilvy.com" | tr 'A-Z' 'a-z' \
-  | openssl dgst -sha256 -hex | awk '{print substr($2,1,12)}'
-```
+Firms are identified by their **apex domain** (`ogilvy.com`, not
+`www.ogilvy.com/about`). Strip user-supplied URLs to the apex before
+calling `:apex` endpoints or building unlock batches.
 
 ## Recipes
 
@@ -280,25 +148,25 @@ echo -n "ogilvy.com" | tr 'A-Z' 'a-z' \
 User: *"Three B2B branding agencies in California for a Series-A SaaS company."*
 
 ```
-GET /v1/explore?filter=industry:marketing_agency+state:CA+service_provided:branding@high
-# → pool size + breakdowns
+GET /v1/datasets/pro_services/search?filter=industry:marketing_agency+state:CA+service_provided:branding@high+b2b&limit=10
+# → 10 brief cards + total + per-row unlock.status
 
-GET /v1/search?filter=industry:marketing_agency+state:CA+service_provided:branding@high&limit=10
-# → 10 brief cards; user picks 3
-
-GET /v1/get/<firm_id>     # ×3
-# → urls, phones, emails for outreach
+# Present, get user's pick of 3. "Unlocking 3 = 30 credits, 30-day TTL."
+POST /v1/datasets/pro_services/unlocks
+  { "apexes": ["firm-a.com", "firm-b.com", "firm-c.com"] }
+# → brief + detail for all 3
 ```
 
 ### B. PPC + ecommerce vertical
 
 User: *"PPC shop that specializes in ecommerce."*
 
-The "ecommerce" qualifier is keyword-extracted from firm text since
-client-vertical isn't a structured facet:
+The catalog has a real `ecommerce-marketing` tag — pin it alongside
+PPC for tighter shortlists than relying on the `ecommerce` keyword
+alone:
 
 ```
-GET /v1/search?filter=industry:marketing_agency+service_provided:ppc+ecommerce&limit=10
+GET /v1/datasets/pro_services/search?filter=industry:marketing_agency+service_provided:ppc+service_provided:ecommerce-marketing&limit=10
 ```
 
 ### C. Multi-tag intersection — content + email + B2B vertical
@@ -306,90 +174,99 @@ GET /v1/search?filter=industry:marketing_agency+service_provided:ppc+ecommerce&l
 User: *"Content marketing partner for a SaaS launch — should also do email."*
 
 ```
-GET /v1/search?filter=industry:marketing_agency+service_provided:content-marketing@high+service_provided:email-marketing+saas
+GET /v1/datasets/pro_services/search?filter=industry:marketing_agency+service_provided:content-marketing@high+service_provided:email-marketing+saas
 ```
+
+If the NY-area pool collapses with a `fintech`/`saas` keyword (it
+tends to — vertical pins under-perform on agency copy), drop the
+keyword and surface vertical experience to the user from briefs.
 
 ### D. Performance / demand-gen (indirect intent)
 
 User: *"Someone to run our quarterly demand-gen campaigns and own the funnel."*
 
 The catalog has **no** `performance-marketing` / `demand-gen` /
-`demand-generation` tags — that user-phrasing maps to
-`inbound-marketing`, `marketing-strategy`, or
-`conversion-optimization`, plus a keyword fallback for the user's
-exact wording:
+`demand-generation` tag — map to `inbound-marketing`,
+`marketing-strategy`, or `conversion-optimization`, plus a keyword
+for the user's wording:
 
 ```
-GET /v1/search?filter=industry:marketing_agency+(service_provided:inbound-marketing@high OR service_provided:marketing-strategy@high OR service_provided:conversion-optimization@high)+(demand OR funnel)
+GET /v1/datasets/pro_services/search?filter=industry:marketing_agency+(service_provided:inbound-marketing@high OR service_provided:marketing-strategy@high OR service_provided:conversion-optimization@high)+(demand OR funnel)&limit=10
 ```
 
-If breakdowns come back thin, drop the `@high` evidence qualifier or
-fall back to pure keyword: `demand industry:marketing_agency`.
+If breakdowns are thin, drop `@high` or fall back to pure keyword.
+
+Alternatively, use the intent translator:
+
+```
+POST /v1/datasets/pro_services/translate-intent
+  { "intent": "agency to run quarterly demand-gen campaigns and own the funnel" }
+```
 
 ### E. Quality threshold (third-party signals)
 
 User: *"Compare three social media agencies that have worked with Fortune 500 — high evidence."*
 
 ```
-GET /v1/search?filter=industry:marketing_agency+service_provided:social-media-marketing@high+rating>=4+review_count_total>=20+has:clutch&limit=10
+GET /v1/datasets/pro_services/search?filter=industry:marketing_agency+service_provided:social-media-marketing@high+rating>=4+review_count_total>=20+has:clutch&limit=10
 ```
 
-`fortune 500` is hard to filter structurally; surface to the user in
-the brief cards and let them pick from there, or add as a keyword
-(`industry:marketing_agency service_provided:social-media-marketing@high fortune`).
+`fortune 500` is hard to filter structurally; let the user pick from
+briefs or add `fortune` as a keyword.
 
-### F. Video production
+### F. DTC ecommerce agencies
+
+User: *"Paid-social agency for our DTC apparel brand."*
+
+```
+GET /v1/datasets/pro_services/search?filter=industry:marketing_agency+service_provided:ecommerce-marketing+service_provided:social-media-marketing+dtc&limit=10
+```
+
+### G. Video production
 
 User: *"Video production studio for a 90-second product launch film, NYC or LA."*
 
 ```
-GET /v1/search?filter=industry:marketing_agency+service_provided:video-production+state:NY,CA
+GET /v1/datasets/pro_services/search?filter=industry:marketing_agency+service_provided:video-production+state:NY,CA&limit=10
 ```
 
-The catalog uses one `state` per firm based on HQ; if the user wants
-NYC specifically, use `state:NY` and surface the city to the user from
-the `/get` bundle.
+State is HQ-only; surface city from the unlocked detail for NYC-vs-LA disambiguation.
 
-### G. BYO apex list — enrich domains the user already has
+### H. BYO apex list — enrich domains
 
-User pastes 8–20 domains. For each:
+User pastes 8–20 domains:
 
-1. Compute `firm_id` locally (see contract above).
-2. `GET /v1/get/<firm_id>` — full bundle if in catalog, 404 (not
-   charged) if not.
-3. Aggregate, present, flag the not-found ones to the user.
-
-Useful for confirming whether a list of domains is actually in the
-US marketing-agency catalog and pulling contact info in one pass.
+1. `GET /v1/datasets/pro_services/:apex` per domain — free brief
+   (404 = not in catalog, no charge). Flag misses.
+2. User picks N to fully enrich. `POST /unlocks` with all of them =
+   **10×N credits**, single atomic charge, detail bundles returned.
+3. Within 30-day TTL, repeated unlock POSTs are free.
 
 ## Gotchas
 
-- **Always pin `industry:marketing_agency`.** Without it, `service_provided:branding` would match design firms, IT services, and others that also have branding tags. The industry pin is what makes this skill the marketing-agency skill.
-- **Defer to sibling skills for narrow asks.** If the user asks strictly for "an SEO agency" with no other marketing scope, use `find-seo-agency`. If strictly web/app development, use `find-web-developer` / `find-software-developer`. This skill is for marketing engagements that span branding/content/paid/social/etc.
-- **`looks_not_pro_services` 404 is not a bug.** A `firm_id` may exist in `/search` but 404 on `/get` if it's been flagged. Skip and continue; not charged.
-- **`/v1/explore` k=20 suppression.** When fewer than 20 firms match, the response is `{"count": "<20", "suppressed": true, "breakdowns": {}}`. Drilling further makes the count smaller, not bigger. Broaden or escalate to `/v1/search`.
-- **Briefs from `/search` do NOT include `apex`, `url`, `phone_primary`, `email_primary`, `legal_name`, or address.** If the user asks for contact info, you must `/get/:id`. Do not pretend to have it from the brief.
-- **Catalog is US-only B2B.** Refuse non-US asks ("a luxury-brand agency in London"), individual freelancers, and personal-brand consulting for the user themselves.
-- **Multi-word phrases must be split into separate barewords.** `b2b saas` parses as two AND'd keywords.
-- **Quota is per-user-per-month, deduped on first view.** Re-views are free; re-pagination is free.
+- **Always pin `industry:marketing_agency`.** Without it, `service_provided:branding` matches design firms, IT services, and others.
+- **Defer to sibling skills for narrow asks.** SEO-only → `find-seo-agency`. Strictly web/app development → `find-web-developer` / `find-software-developer`.
+- **Briefs DO include `apex`, `name`, `industry`, `service_provided`, state, ratings.** They DON'T include `url`, `phone_primary`, `email_primary`, `legal_name`, `address_full`, full `platforms`. Those require an unlock.
+- **`not_found` / `not_in_dataset` 404 is not a bug.** Apex isn't in `pro_services` (might be in another dataset). Skip; not charged.
+- **Catalog is US-only B2B.** Refuse non-US asks, individual freelancers, and personal-brand consulting for the user themselves.
+- **Multi-word phrases must be split or quoted.** `b2b saas` parses as two AND'd keywords; `"b2b saas"` is one phrase.
+- **Unlock is atomic.** `POST /unlocks` with 5 apexes either charges (up to) 50 credits or leaves balance untouched on 402. Plan the batch.
+- **Within-TTL re-views are free.** Re-running unlock on an apex still inside its 30-day window returns `was_cached:true`.
 
 ## Errors
 
-All errors return JSON: `{"error": {"code": "...", "message": "..."}}`.
+JSON envelope: `{"error": {"code": "...", "message": "..."}}`.
 
 | Status | Code | What to do |
 |---|---|---|
-| 400 | `filter_parse_error` | Payload includes `position`. Fix the filter, re-validate with `/v1/check`. |
-| 400 | `filter_required` | Empty filter where one is required. |
-| 400 | `invalid_firm_id` | firm_id must be 12 lowercase hex chars. Re-derive. |
-| 401 | `unauthorized` | Token missing/expired. Re-run OTP. |
-| 404 | `not_found` | Firm not in catalog or flagged. Not charged. Skip and continue. |
-| 429 | `rate_limited` | Honor `Retry-After` header / `retry_after` field. |
-| 429 | `monthly_quota_exhausted` | Switch to `/v1/explore`-only mode for the rest of the month. Tell the user. |
-
-Authed responses carry `X-RateLimit-*` and `X-Quota-*` headers. Surface
-the remaining-month value to the user when it gets low so they can
-budget.
+| 400 | `filter_parse_error` | `position` included; fix and re-validate with `/check`. |
+| 400 | `kind_in_filter` | Strip any `kind:` from filter — URL is authoritative. |
+| 400 | `field_not_in_dataset` | Field isn't allowed on `pro_services`; drop it. |
+| 400 | `invalid_apex` | Re-normalize to apex. |
+| 401 | `unauthorized` / `invalid_audience` | Re-prompt for a fresh `vk_…`. |
+| 402 | `insufficient_credits` | `needed` and `balance` in payload; nothing charged. |
+| 404 | `not_found` / `not_in_dataset` | Skip; not charged. |
+| 429 | `rate_limited` | Honor `Retry-After`. |
 
 ## End-to-end example
 
@@ -398,28 +275,23 @@ Series-A SaaS company — high evidence on branding, ideally with at
 least a 4-star rating."*
 
 ```
-# 1. Discover fields (once per session)
-GET /v1/tags?include_values=1
-# Confirms 'branding' is a valid service_provided tag, 'rating' is numeric.
+# 1. Discover (once per session)
+GET /v1/datasets/pro_services/fields?include_values=1
+# Confirms 'branding' is in service_provided, rating is numeric.
 
-# 2. Validate the filter and scope the pool (free, no auth)
-GET /v1/check?filter=industry:marketing_agency+state:CA+service_provided:branding@high+rating>=4+b2b
-# → {"valid": true, "normalized": "..."}
+# 2. Validate + scope (free)
+GET /v1/datasets/pro_services/check?filter=industry:marketing_agency+state:CA+service_provided:branding@high+rating>=4+b2b
 
-GET /v1/explore?filter=industry:marketing_agency+state:CA+service_provided:branding@high+rating>=4+b2b
-# → {"count": 38, "breakdowns": {...}}
+# 3. Search briefs (free)
+GET /v1/datasets/pro_services/search?filter=...&limit=10
+# → 10 cards + total + per-row unlock.status
 
-# 3. Search briefs
-GET /v1/search?filter=...&limit=10
-# Header: Authorization: Bearer $SERVICEGRAPH_TOKEN
-# → 10 brief cards with service tags, size, state.
+# 4. Present, get pick of 3. "Unlocking 3 firms = 30 credits, 30-day TTL."
 
-# 4. Present briefs to user, get their pick of 3.
+# 5. Atomic unlock (charges 30 credits)
+POST /v1/datasets/pro_services/unlocks
+  { "apexes": ["firm-a.com", "firm-b.com", "firm-c.com"] }
 
-# 5. Pull full bundles for the 3 picks
-GET /v1/get/<firm_id>     # ×3
-# → urls, phones, emails for outreach
+# 6. (Optional) Confirm balance
+GET /v1/me/credits
 ```
-
-End of session: report `X-Quota-Remaining-Month` so the user knows how
-much budget is left.

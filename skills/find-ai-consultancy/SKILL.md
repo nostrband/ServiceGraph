@@ -4,214 +4,100 @@ description: Use whenever the user wants to find, shortlist, vet, or enrich US A
 license: MIT
 metadata:
   api_base: https://api.servicegraph.co
+  dataset_id: pro_services
   industry: data_ai_consulting
-  version: "0.2"
+  version: "0.3"
 ---
 
 # find-ai-consultancy
 
 Drive the **ServiceGraph API** (`https://api.servicegraph.co`) to find,
-shortlist, and enrich US AI/ML and data consultancies. The catalog
-tags firms with `industry:data_ai_consulting` and a 4-tag service
-sub-taxonomy: `ai-ml-development` (the largest at ~12k firms),
-`data-analytics`, `cloud-services`, and `api-integration`. Confirm
-exact tag names via `/v1/tags` since taxonomy can drift between
-catalog releases.
+shortlist, and enrich US AI/ML and data consultancies via the
+`pro_services` dataset. The catalog tags firms with
+`industry:data_ai_consulting` and a 4-tag service sub-taxonomy:
+`ai-ml-development` (the largest at ~12k firms), `data-analytics`,
+`cloud-services`, and `api-integration`. There is **no
+`data-engineering` or `business-intelligence` sub-tag** —
+`data-analytics` covers both. Confirm exact tag names via
+`/v1/datasets/pro_services/fields?include_values=1`.
 
-**Always pin `industry:data_ai_consulting`.** This skill exists to do
-that automatically — the user shouldn't have to think about catalog
+**Always pin `industry:data_ai_consulting`.** This skill exists to
+do that automatically — the user shouldn't have to think about catalog
 taxonomy.
 
 Any HTTP client works (curl, fetch, requests). Examples below use curl.
 
 ## Sibling skills — defer when scope is different
 
-- **General application or backend dev that just uses AI as a feature**
+- **General application or backend dev that uses AI as a feature**
   (e.g. "build us a SaaS with an AI chatbot tab") → `find-software-developer`.
-  This skill is for engagements where the AI/ML/data work IS the deliverable.
 - **Web/site projects that include some AI** → `find-web-developer`.
 - **AI-related marketing or content** → `find-marketing-agency`.
 
-If the user wants AI/ML/data engineering as the primary deliverable
-(model building, pipelines, agents, MLOps, BI), this skill applies.
+This skill is for engagements where the AI/ML/data work IS the
+deliverable.
 
 ## When NOT to use this skill
 
-- **Consumer AI courses or learning** ("find me an online course to learn
-  ML") — out of scope; the catalog is firm-procurement.
-- **AI/LLM product comparisons** ("ChatGPT vs Claude vs Gemini",
-  "Cursor vs Copilot") — software-product questions, not procurement.
-- **DIY/code tasks** ("how do I fine-tune Llama", "review this PyTorch
-  training loop").
-- **In-house ML/data hires** (Machine Learning Engineer, Data Scientist,
-  ML Platform Engineer).
-- **Generic AI knowledge** ("explain how transformers work").
-- **Non-US firms.**
-- **Individual freelance ML engineers / data scientists.**
-
-If the user is a *business* procuring external AI/ML/data services,
-this skill applies — defaults to fire on B2B procurement intent.
+- **Consumer AI courses or learning** ("find me an online course to learn ML").
+- **AI/LLM product comparisons** ("ChatGPT vs Claude vs Gemini", "Cursor vs Copilot").
+- **DIY/code tasks** ("how do I fine-tune Llama", "review this PyTorch loop").
+- **In-house ML/data hires** (Machine Learning Engineer, Data Scientist).
+- **Generic AI knowledge questions**.
+- **Non-US firms** / **individual freelance ML engineers**.
 
 ## MCP server (preferred for authed calls)
 
-If your agent harness has the **ServiceGraph MCP server** loaded
-(`https://mcp.servicegraph.co`), prefer its tools for the **authed**
-tier (`/search`, `/get`, `/stats`). The MCP server uses OAuth 2.1 +
-PKCE — the host harness handles credentials in its own audited
-sandbox, so there's no `.env.local`, no shell dispatch, and no token
-value ever enters the LLM context.
+If your harness has the ServiceGraph MCP server loaded (tools
+containing `servicegraph`), prefer those — OAuth 2.1 + PKCE keeps the
+token in the harness sandbox. Otherwise use the REST flow below.
 
-For the **anonymous** tier (`/tags`, `/check`, `/explore`), MCP is
-**not** preferred — every MCP tool requires OAuth (the server has no
-anonymous tier), so plain curl against the REST URL is the simpler
-path for discovery calls. Use the REST patterns below for those.
+## API surface (dataset id: `pro_services`)
 
-The MCP tools 1:1-map to the public REST endpoints — same backend,
-same quota, same data:
+Every endpoint requires the bearer (`Authorization: Bearer vk_…`).
+No anonymous tier.
 
-| MCP tool | REST endpoint | Anon? | Recommended path |
-|---|---|---|---|
-| `list_tags` | `GET /v1/tags` | yes | curl |
-| `check_filter` | `GET /v1/check` | yes | curl |
-| `explore_firms` | `GET /v1/explore` | yes | curl |
-| `search_firms` | `GET /v1/search` | no | MCP if loaded, else curl + OTP |
-| `get_firm` | `GET /v1/get/:id` | no | MCP if loaded, else curl + OTP |
-| `catalog_stats` | `GET /v1/stats` | no | MCP if loaded, else curl + OTP |
+| Endpoint | Cost | Use it for |
+|---|---|---|
+| `GET /v1/datasets/pro_services/fields[?include_values=1]` | free | Confirm `data_ai_consulting` industry value and sub-tag names. |
+| `GET /v1/datasets/pro_services/check?filter=…` | free | Validate filter. |
+| `POST /v1/datasets/pro_services/translate-intent` | free | `{intent}` → DSL filter + sanity count. |
+| `GET /v1/datasets/pro_services/search?filter=…&limit=` | free | Brief firm cards + per-row unlock hint + total. |
+| `GET /v1/datasets/pro_services/:apex` | free | One row brief; detail only if unlocked. |
+| `POST /v1/datasets/pro_services/unlocks` | **10 credits / firm** | `{apexes:[...]}` ≤100; atomic; 30-day TTL on detail. |
+| `GET /v1/me/credits` | free | Balance. |
 
-**Detection**: if you see any MCP tools with `servicegraph` in the
-name (the harness-specific prefix varies — agents pattern-match the
-substring), the ServiceGraph MCP server is loaded. Prefer those
-tools for the authed tier; complete any auth flow the harness
-initiates if needed. If no `servicegraph` MCP tools are present,
-fall through to the REST + OTP flow below for the authed tier.
-
-## The four-tier funnel
-
-| Tier | Auth | Cost | Use it for |
-|---|---|---|---|
-| `GET /v1/tags` | none | free | **First call of every session.** Discover legal field names, kinds, operators, values. |
-| `GET /v1/check?filter=...` | none | free | Validate a filter before spending an explore/search call. |
-| `GET /v1/explore?filter=...` | none | free, IP-throttled | Scope: count + breakdowns. Use to size the candidate pool before quota-spending. |
-| `GET /v1/search?filter=...` | bearer | 200 unique firms / month free | Brief firm cards. **No url, no contact info.** Use for ranking / shortlisting. |
-| `GET /v1/get/:id` | bearer | 50 unique firms / month free | Full bundle: url, phone, email, social, legal name, address. **Only call for shortlisted firms.** |
-| `POST /v1/research` | paid | not in MVP | Deferred — skip. |
-
-**Quota rule that matters**: `/search` and `/get` charge per *unique
-firm viewed per calendar month*, not per call. Re-paging the same
-query is free. Two different filters that overlap charge once for
-the overlap. Re-fetching a firm you already pulled this month is free.
-
-## Session-start ritual
-
-Before constructing any filter, call:
-
-```
-GET https://api.servicegraph.co/v1/tags?include_values=1
-```
-
-Cache the response for the conversation. Confirm `data_ai_consulting`
-is present in the `industry` value list. The relevant sub-tags under
-`service_provided` are `ai-ml-development`, `data-analytics`,
-`cloud-services`, and `api-integration` — verify exact names before
-constructing filters with `service_provided:` predicates.
-
-Field kinds you'll use most:
-- **categorical**: `industry` (always `data_ai_consulting`), `state`, `pricing_model`, `company_size_signal`, `geography_served` — op `:`
-- **tag_set_with_evidence**: `service_provided` (e.g. `ai-ml-development`, `data-analytics`, `cloud-services`, `api-integration`) — op `:` with optional `@evidence`
-- **numeric**: `rating`, `review_count_total`, `founded_year` — ops `= >= <= > <`
-- **presence**: `has:phone`, `has:clutch`, `has:rating`, `has:linkedin_company`, …
-- **keyword**: free-text substring across firm name / brand / title / meta / legal_name. **Sub-niches like RAG, LLM, MLOps, computer vision, NLP, recommendation systems are typically keyword-only.**
+**Cost model.** Discovery / validation / search / brief reads are
+free. Detail (url, phone, email, social, address, full `platforms`
+map) costs **10 credits per firm** and lasts **30 days**.
 
 ## Auth
 
-`/tags`, `/check`, and `/explore` are anonymous. `/search` and `/get`
-require a bearer token.
+`vk_*` API keys minted in the dashboard. **Keep the token out of the
+LLM context** — never read `.env*` into your context; dispatch via
+shell.
 
-**Security model — keep the token out of the LLM context.**
-
-- **Never** read `.env`, `.env.local`, or any other credential file
-  into your context. The token's literal value should never appear
-  in the conversation.
-- Use shell dispatch for every authed request so the token flows
-  directly from the user's environment / dotenv file into the
-  `Authorization` header without round-tripping through the LLM.
-- **Always ask the user once per session** before using a detected
-  token, even if it's already in their shell or `.env.local`.
-
-**Resolution rule**:
-
-1. **Detect** whether a token is available — without reading its
-   value. Run a shell check that only inspects exit codes:
+1. **Try the call first** through a shell wrapper that sources
+   `.env.local`:
 
    ```bash
-   ( [ -n "${SERVICEGRAPH_TOKEN:-}" ] \
-     || grep -qs '^SERVICEGRAPH_TOKEN=' .env.local \
-     || grep -qs '^SERVICEGRAPH_TOKEN=' .env )
+   ( set -a; [ -f .env.local ] && . ./.env.local; set +a;
+     curl -sS -H "Authorization: Bearer $SERVICEGRAPH_API_KEY" \
+          'https://api.servicegraph.co/v1/datasets/pro_services/fields' )
    ```
 
-   Exit code `0` = token is available somewhere; non-zero = no token.
+2. **On `401`** prompt the user (don't accept the key in chat):
 
-2. **Confirm with the user** before the first authed call this session:
+   > "Open **https://servicegraph.co/profile/api-keys**, create a
+   > key, and add `SERVICEGRAPH_API_KEY=vk_…` to `.env.local` here
+   > (or export it). Tell me when done. Please don't paste the key
+   > into chat."
 
-   > "I found a `SERVICEGRAPH_TOKEN` in your environment / `.env.local`.
-   > OK to use it for ServiceGraph API requests this session?"
-
-   If the user says no, stay on the anonymous tiers (`/tags`, `/check`,
-   `/explore`) and skip authed calls. Don't re-ask later unless the
-   user asks for authed work.
-
-3. **Dispatch via shell** — every authed call goes through a shell
-   wrapper so the literal token never enters the conversation:
-
-   ```bash
-   # If exported in the shell environment:
-   curl -H "Authorization: Bearer $SERVICEGRAPH_TOKEN" \
-        'https://api.servicegraph.co/v1/search?filter=...'
-
-   # If in .env.local — source it inside a subshell so it doesn't
-   # leak into the parent shell either:
-   ( set -a; . ./.env.local; set +a;
-     curl -H "Authorization: Bearer $SERVICEGRAPH_TOKEN" \
-          'https://api.servicegraph.co/v1/search?filter=...' )
-   ```
-
-   Capture the response body to a tmp file or jq-process it, but do
-   NOT echo the request command with the token expanded.
-
-4. **OTP flow** if no token is detected — capture the new token
-   directly into `.env.local` without surfacing its value to the LLM:
-
-   ```bash
-   # 1. trigger the email — agent prompts the user for $EMAIL
-   curl -fsS -X POST 'https://api.servicegraph.co/v1/auth/request-otp' \
-     -H 'Content-Type: application/json' \
-     -d "{\"email\":\"$EMAIL\"}"
-
-   # 2. exchange the code — agent prompts the user for $CODE.
-   #    The ?format=env query param returns SERVICEGRAPH_TOKEN=<token>
-   #    as plain text appended to .env.local — no jq needed. The -f
-   #    flag makes curl exit non-zero on 4xx so a wrong code doesn't
-   #    pollute the file (the error mirror is also a `# comment` line,
-   #    safe to ignore even if it lands).
-   curl -fsS -X POST 'https://api.servicegraph.co/v1/auth/verify-otp?format=env' \
-     -H 'Content-Type: application/json' \
-     -d "{\"email\":\"$EMAIL\",\"code\":\"$CODE\",\"name\":\"claude-cli\"}" \
-     >> .env.local
-
-   # 3. confirm capture without revealing the value
-   grep -q '^SERVICEGRAPH_TOKEN=' .env.local && echo "OTP token captured."
-   ```
-
-   After a successful capture, the user has implicitly consented
-   (they just completed the flow), so proceed to dispatch (step 3).
-   The token is now persistent in `.env.local` for future sessions.
-
-5. If a `/search` or `/get` returns `401 unauthorized` mid-session,
-   the token expired or was revoked — re-run the OTP flow.
+3. **Retry** after the user signals ready.
 
 ## Filter DSL
 
-One query parameter, GitHub-search-style.
+GitHub-search-style.
 
 ```
 filter   := orExpr
@@ -227,81 +113,57 @@ tagAtEvidence := IDENT "@" ("low"|"medium"|"high")
 bareword := IDENT | NUMBER          # → keyword:<bareword>
 ```
 
-**Four rules that bite:**
+**Four rules that bite:** AND binds tighter than OR (use parens);
+comma list = OR within one predicate; negation is `-x` or `NOT x`;
+bareword = keyword search (quote multi-word phrases).
 
-1. **AND binds tighter than OR.** `a OR b c` parses as `a OR (b AND c)`.
-   Use parens.
-2. **Comma list = OR within one predicate.** `state:CA,NY,TX` matches
-   any of the three.
-3. **Negation is `-x` or `NOT x`.** Negative literals inside a comma
-   list are **not** allowed: `state:CA,-NY` is rejected. Use
-   `state:CA -state:NY`.
-4. **Bareword = keyword search.** Any IDENT or NUMBER not followed by
-   an operator becomes a free-text substring across name / brand /
-   title / meta / legal_name. Multiple barewords AND.
-
-**AI-flavored examples** (validate yours with `/v1/check`):
+**AI-flavored examples** (validate yours with `/check`):
 
 ```
 industry:data_ai_consulting service_provided:ai-ml-development
 industry:data_ai_consulting service_provided:ai-ml-development@high state:CA
 industry:data_ai_consulting service_provided:data-analytics pipelines
 industry:data_ai_consulting llm rag
-industry:data_ai_consulting computer vision healthcare
+industry:data_ai_consulting "computer vision" healthcare
 industry:data_ai_consulting mlops
 industry:data_ai_consulting (service_provided:ai-ml-development OR service_provided:data-analytics)
 industry:data_ai_consulting service_provided:ai-ml-development@high rating>=4 has:clutch
 ```
-
-When in doubt, hit `/v1/check?filter=...` first.
 
 **Sub-niche → keyword/tag mapping**:
 
 | User asks for | Use |
 |---|---|
 | AI/ML model building | `service_provided:ai-ml-development` |
-| Data engineering / pipelines | `service_provided:data-analytics` + keywords `pipelines`/`engineering` (no `data-engineering` tag exists) |
+| Data engineering / pipelines | `service_provided:data-analytics` + keywords `pipelines` / `engineering` (no `data-engineering` tag) |
 | BI / analytics | `service_provided:data-analytics` (covers BI too — no separate `business-intelligence` tag) |
 | Cloud architecture for data/ML | `service_provided:cloud-services` |
-| API integration / data integration | `service_provided:api-integration` |
+| API / data integration | `service_provided:api-integration` |
 | LLM apps / RAG / agents | `llm`, `rag`, `agent` (keywords) |
-| Generative AI | `generative ai`, `genai` (keywords) |
-| Computer vision | `computer vision`, `cv` (keywords) |
-| NLP / IDP / document understanding | `nlp`, `idp`, `document understanding` |
+| Generative AI | `"generative ai"`, `genai` |
+| Computer vision | `"computer vision"`, `cv` |
+| NLP / IDP / document understanding | `nlp`, `idp`, `"document understanding"` |
 | MLOps / model deployment | `mlops`, `deployment` |
 | Recommendation systems | `recommendation`, `recsys` |
 | Predictive analytics / churn / forecasting | `predictive`, `forecasting`, `churn` |
 
-## firm_id contract
+## Identifying firms — `apex`
 
-`firm_id` is a stable 12-hex-char handle:
-
-```
-firm_id = sha256(apex.lower().rstrip(".")).hexdigest()[:12]
-```
-
-```python
-import hashlib
-def firm_id(apex):
-    return hashlib.sha256(apex.lower().rstrip(".").encode()).hexdigest()[:12]
-```
-
-```bash
-echo -n "scaleai.com" | tr 'A-Z' 'a-z' \
-  | openssl dgst -sha256 -hex | awk '{print substr($2,1,12)}'
-```
+Firms are identified by their **apex domain** (`scaleai.com`, not
+`www.scaleai.com/about`).
 
 ## Recipes
 
 ### A. AI/ML consultancy for a recommendation engine
 
-User: *"AI/ML consultancy to build our recommendation engine for an
-ecommerce site."*
+User: *"AI/ML consultancy to build our recommendation engine for an ecommerce site."*
 
 ```
-GET /v1/explore?filter=industry:data_ai_consulting+service_provided:ai-ml-development+(recommendation OR recsys)+ecommerce
-GET /v1/search?filter=industry:data_ai_consulting+service_provided:ai-ml-development+recommendation+ecommerce&limit=10
-GET /v1/get/<firm_id>     # ×3
+GET /v1/datasets/pro_services/search?filter=industry:data_ai_consulting+service_provided:ai-ml-development+recommendation+ecommerce&limit=10
+
+# Present, get pick of 3. "Unlocking 3 = 30 credits, 30-day TTL."
+POST /v1/datasets/pro_services/unlocks
+  { "apexes": ["firm-a.com", "firm-b.com", "firm-c.com"] }
 ```
 
 ### B. RAG / LLM consultancies for a chatbot
@@ -309,112 +171,106 @@ GET /v1/get/<firm_id>     # ×3
 User: *"Three RAG/LLM consultancies for an enterprise chatbot."*
 
 ```
-GET /v1/search?filter=industry:data_ai_consulting+(rag OR llm)+chatbot+enterprise
+GET /v1/datasets/pro_services/search?filter=industry:data_ai_consulting+(rag OR llm)+chatbot+enterprise&limit=10
 ```
 
-If thin, drop `enterprise` and surface client-tier signals from
-`/get` after.
+If thin, drop `enterprise` and surface client-tier signals from the
+unlocked detail later.
 
 ### C. Data engineering partner
 
 User: *"Data-engineering partner to build our analytics pipelines."*
 
-The catalog has no `data-engineering` tag — `data-analytics` is the
-closest sub-tag and it covers both BI and engineering work. Pin the
-tag and add keywords for the engineering flavor:
+No `data-engineering` tag — `data-analytics` is the closest and
+covers both BI and engineering. Pin the tag plus keyword:
 
 ```
-GET /v1/search?filter=industry:data_ai_consulting+service_provided:data-analytics+(pipelines OR engineering)
+GET /v1/datasets/pro_services/search?filter=industry:data_ai_consulting+service_provided:data-analytics+(pipelines OR engineering)&limit=10
 ```
 
 ### D. MLOps for model deployment
 
-User: *"MLOps consultancy to help us deploy models to production."*
-
 ```
-GET /v1/search?filter=industry:data_ai_consulting+mlops
+GET /v1/datasets/pro_services/search?filter=industry:data_ai_consulting+mlops&limit=10
 ```
 
 ### E. Indirect intent — "use AI to predict customer churn"
 
-User: *"We want to use AI to predict customer churn — who can help us
-build that?"*
-
-That's a custom-ML consulting ask in the predictive-analytics niche:
+User: *"We want to use AI to predict customer churn — who can help us build that?"*
 
 ```
-GET /v1/search?filter=industry:data_ai_consulting+service_provided:ai-ml-development+(churn OR predictive)
+GET /v1/datasets/pro_services/search?filter=industry:data_ai_consulting+service_provided:ai-ml-development+(churn OR predictive)&limit=10
 ```
 
-If the user gave a vertical (SaaS, retail, telco), add it as a
-keyword.
+Or let the translator do the mapping:
+
+```
+POST /v1/datasets/pro_services/translate-intent
+  { "intent": "AI consultancy to build customer churn prediction" }
+```
 
 ### F. Computer vision + healthcare vertical
 
-User: *"AI consultancies specializing in computer vision for healthcare."*
-
 ```
-GET /v1/search?filter=industry:data_ai_consulting+computer vision+healthcare
+GET /v1/datasets/pro_services/search?filter=industry:data_ai_consulting+"computer vision"+healthcare&limit=10
 ```
 
 ### G. Quality threshold + Fortune 500 clients
 
-User: *"Three AI/ML consulting firms with 4-star ratings and Fortune
-500 clients."*
-
 ```
-GET /v1/search?filter=industry:data_ai_consulting+service_provided:ai-ml-development@high+rating>=4&limit=10
+GET /v1/datasets/pro_services/search?filter=industry:data_ai_consulting+service_provided:ai-ml-development@high+rating>=4+fortune&limit=10
 ```
 
-The "Fortune 500" angle isn't structured — surface from briefs and
-let the user pick, or add `fortune` as a keyword.
+"Fortune 500" as a structured filter isn't a thing — surface from
+briefs or treat it as a keyword.
 
 ### H. Custom LLM agent for customer service
 
-User: *"Custom LLM agent for our customer-service workflows."*
-
 ```
-GET /v1/search?filter=industry:data_ai_consulting+(llm OR agent)+(customer service OR support)
+GET /v1/datasets/pro_services/search?filter=industry:data_ai_consulting+(llm OR agent)+("customer service" OR support)&limit=10
 ```
 
-### I. BYO apex list — enrich domains the user already has
+### I. BYO apex list — enrich domains
 
-User pastes 8–20 AI consultancy domains. For each:
+User pastes 8–20 AI consultancy domains:
 
-1. Compute `firm_id` locally.
-2. `GET /v1/get/<firm_id>` — full bundle if in catalog, 404 if not.
-3. Aggregate, present, flag the not-found ones to the user.
+1. `GET /v1/datasets/pro_services/:apex` per domain — free brief
+   (404 = not in catalog, no charge).
+2. User picks N to fully enrich. `POST /unlocks` = **10×N credits**,
+   atomic, detail returned.
+3. Re-runs within 30-day TTL are free.
 
 A 404 here often means the firm is actually a SaaS product company
 (many AI vendors brand as "AI services" but operate as a product) —
-not in the consulting catalog.
+filtered out of the catalog.
 
 ## Gotchas
 
-- **Always pin `industry:data_ai_consulting`.** Without it, `ai-ml-development` as a service tag could surface IT firms that list AI as a sub-service.
+- **Always pin `industry:data_ai_consulting`.** Without it, `ai-ml-development` as a service tag surfaces IT firms that list AI as a sub-service.
 - **Defer to `find-software-developer` for general dev that uses AI as a feature.** When the deliverable is a SaaS product or app and AI is one of several features, that's software-dev work; this skill is for engagements where AI/ML/data work IS the deliverable.
-- **Catalog audit notes**: AI/ML-tagged firms have a higher historical rate of mis-classification (some are SaaS products, some are B2C ed-tech). The catalog has been audited but residual leakage is possible. If a `/get` returns a SaaS product, the agent should flag this and skip rather than recommend.
-- **Many sub-niches are keyword-only.** Multi-word sub-niches split into ANDed barewords (`computer vision` → `computer` AND `vision`).
-- **LLM-product comparisons (ChatGPT vs Claude vs Gemini, etc.) are NOT procurement** — refuse those.
-- **AI courses for individuals (Coursera, fast.ai, Andrew Ng courses) are NOT in the catalog** — refuse those.
-- **`looks_not_pro_services` 404 is not a bug.** A `firm_id` may exist in `/search` but 404 on `/get` if it's been flagged. Skip and continue; not charged.
-- **`/v1/explore` k=20 suppression.** When fewer than 20 firms match, the response is `{"count": "<20", "suppressed": true, "breakdowns": {}}`. Drilling further makes the count smaller. Broaden or escalate to `/v1/search`.
-- **Briefs from `/search` do NOT include `apex`, `url`, `phone_primary`, `email_primary`, `legal_name`, or address.** If the user asks for contact info, you must `/get/:id`.
-- **Quota is per-user-per-month, deduped on first view.** Re-views are free; re-pagination is free.
+- **Catalog audit notes**: AI/ML-tagged firms have a higher historical rate of misclassification (some are SaaS products, some are B2C ed-tech). If an unlock returns a SaaS product, flag and skip rather than recommend.
+- **Many sub-niches are keyword-only.** Multi-word sub-niches split into ANDed barewords unless quoted (`computer vision` → `computer` AND `vision`; `"computer vision"` → one phrase).
+- **LLM-product comparisons (ChatGPT vs Claude vs Gemini) are NOT procurement** — refuse.
+- **AI courses for individuals (Coursera, fast.ai) are NOT in the catalog** — refuse.
+- **Briefs DO include `apex`, `name`, `industry`, `service_provided`, location, ratings.** They DON'T include `url`, `phone_primary`, `email_primary`, `legal_name`, `address_full`, full `platforms` — those require an unlock.
+- **`not_found` / `not_in_dataset` 404 = not in `pro_services`.** Not charged. Skip.
+- **Unlock is atomic.** N apexes either all charge (up to 10×N credits) or none on 402.
+- **Within-TTL re-views are free** (`was_cached:true`).
 
 ## Errors
 
-All errors return JSON: `{"error": {"code": "...", "message": "..."}}`.
+JSON envelope: `{"error": {"code": "...", "message": "..."}}`.
 
 | Status | Code | What to do |
 |---|---|---|
-| 400 | `filter_parse_error` | Payload includes `position`. Fix the filter, re-validate with `/v1/check`. |
-| 400 | `filter_required` | Empty filter where one is required. |
-| 400 | `invalid_firm_id` | firm_id must be 12 lowercase hex chars. Re-derive. |
-| 401 | `unauthorized` | Token missing/expired. Re-run OTP. |
-| 404 | `not_found` | Firm not in catalog or flagged. Not charged. Skip and continue. |
-| 429 | `rate_limited` | Honor `Retry-After` header / `retry_after` field. |
-| 429 | `monthly_quota_exhausted` | Switch to `/v1/explore`-only mode for the rest of the month. Tell the user. |
+| 400 | `filter_parse_error` | `position` included; fix and re-validate with `/check`. |
+| 400 | `kind_in_filter` | Strip any `kind:` from filter — URL is authoritative. |
+| 400 | `field_not_in_dataset` | Drop the disallowed field. |
+| 400 | `invalid_apex` | Re-normalize to apex domain. |
+| 401 | `unauthorized` / `invalid_audience` | Re-prompt for fresh `vk_…`. |
+| 402 | `insufficient_credits` | `needed` and `balance` in payload; nothing charged. |
+| 404 | `not_found` / `not_in_dataset` | Skip; not charged. |
+| 429 | `rate_limited` | Honor `Retry-After`. |
 
 ## End-to-end example
 
@@ -422,11 +278,11 @@ User: *"Three AI/ML consultancies to build a recommendation engine for
 an ecommerce site, ideally with 4-star ratings and Fortune 500 clients."*
 
 ```
-GET /v1/tags?include_values=1
-GET /v1/check?filter=industry:data_ai_consulting+service_provided:ai-ml-development@high+(recommendation OR recsys)+ecommerce+rating>=4
-GET /v1/explore?filter=industry:data_ai_consulting+service_provided:ai-ml-development@high+(recommendation OR recsys)+ecommerce+rating>=4
-GET /v1/search?filter=...&limit=10
-GET /v1/get/<firm_id>     # ×3
+GET /v1/datasets/pro_services/fields?include_values=1
+GET /v1/datasets/pro_services/check?filter=industry:data_ai_consulting+service_provided:ai-ml-development@high+recommendation+ecommerce+rating>=4
+GET /v1/datasets/pro_services/search?filter=...&limit=10
+# Present briefs. "Unlocking 3 = 30 credits, 30-day TTL."
+POST /v1/datasets/pro_services/unlocks
+  { "apexes": ["firm-a.com", "firm-b.com", "firm-c.com"] }
+GET /v1/me/credits
 ```
-
-End of session: report `X-Quota-Remaining-Month`.
