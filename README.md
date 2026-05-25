@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/icon.svg" alt="ServiceGraph" width="64" height="64" />
+  <img src="assets/mark-128.png" alt="ServiceGraph" width="64" height="64" />
 </p>
 
 # ServiceGraph Agent Skills
