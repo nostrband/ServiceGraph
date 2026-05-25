@@ -4,17 +4,30 @@
 
 # ServiceGraph Agent Skills
 
-> Stop scraping. Your agent's directory of US service firms is here.
+> **Datasets for founders** — where to launch, who to email, who to hire.
 
-Agent Skills for [**ServiceGraph**](https://servicegraph.co) — a structured
-catalog of **100k+ US professional-services firms** (law, marketing, design,
-consulting, accounting, IT services, AI/ML, web development, engineering,
-HR, PR, cybersecurity, and more) with filters for industry, services
-offered, location, size, ratings, and third-party listing presence.
+Agent Skills for [**ServiceGraph**](https://servicegraph.co) — structured,
+metrics-enriched business datasets your agent can filter, rank, and pull
+contact data from. One filter DSL, one credit balance, many datasets:
 
 <p align="center">
-  <img src="assets/servicegraph.png" alt="What you get for each firm — name, URL, phone, email, services, ratings, listings" width="800" />
+  <img src="assets/servicegraph-datasets.png" alt="ServiceGraph datasets — product directories, business directories, newsletters, agencies, with subreddits and influencers coming soon" width="820" />
 </p>
+
+| Dataset | Size | Enriched with |
+|---|---|---|
+| **Agencies** (US professional-services firms) | 110k+ | services · size · location · ratings |
+| **Business directories** | 3,500+ | industry · domain rating · traffic |
+| **Product directories** | 250+ | submission policy · domain rating · traffic |
+| **Newsletters** | 50k+ | subscribers · topics · post cadence |
+| _subreddits, influencers_ | _coming soon_ | |
+
+**The skills in this repo cover the Agencies dataset today** — law,
+marketing, design, consulting, accounting, IT services, AI/ML, web
+development, engineering, HR, PR, cybersecurity, and more, filterable by
+industry, services, location, size, ratings, and third-party listings.
+Skills for the directory, newsletter, and other datasets land here as they
+ship — same install, same API key, same DSL.
 
 Compatible with **19+ AI agents** including Claude Code, Codex, Cursor, GitHub
 Copilot, Gemini, Cline, Goose, Windsurf, and any other harness that supports
@@ -34,11 +47,14 @@ npx skills add nostrband/servicegraph --skill find-service-providers
 npx skills add nostrband/servicegraph
 ```
 
-No signup is needed for catalog discovery (`/v1/tags`, `/v1/check`,
-`/v1/explore`). Skills prompt the user for an email + one-time code only when
-they reach the contact-info tier (`/v1/search`, `/v1/get`).
+**API key:** browsing, filtering, and brief cards are free, but every call
+needs a key. Create one at
+[**servicegraph.co/profile/api-keys**](https://servicegraph.co/profile/api-keys)
+(2,000 free credits on signup, no card) and put it in your shell or
+`.env.local` as `SERVICEGRAPH_API_KEY=vk_…`. Skills prompt for it on first
+use and never read the value into the model's context.
 
-## Available Skills
+## Available Skills (Agencies dataset)
 
 <details open>
 <summary><strong>find-service-providers</strong> — the umbrella skill</summary>
@@ -240,7 +256,7 @@ candidate-side asks, or in-house recruiter hires.
 Find US public-relations and communications agencies — media relations,
 crisis comms, investor relations (IR), product-launch PR, tech/startup
 PR, healthcare PR, B2B PR, public affairs, brand reputation, internal
-communications. Auto-pins `industry:pr_comms`. Defers to
+communications. Pins `service_provided:public-relations`. Defers to
 `find-marketing-agency` when scope spans broader marketing beyond
 PR/comms.
 
@@ -256,7 +272,7 @@ PR/comms.
 
 Find US cybersecurity firms — pen-testing/red team, security audits,
 vCISO, SOC 2 readiness, incident response, managed SOC, IAM, cloud
-security, AppSec. Auto-pins the cybersecurity industry tag. B2B-only
+security, AppSec. Pins `service_provided:cybersecurity`. B2B-only
 — consumer-personal cybersecurity ("my Gmail got hacked", "secure my
 home wifi") is out of scope.
 
@@ -277,10 +293,9 @@ https://mcp.servicegraph.co
 ```
 
 - **Transport:** Streamable HTTP
-- **Auth:** OAuth 2.1 + PKCE with Dynamic Client Registration — your
-  harness opens a browser tab on first use; the user enters their email +
-  one-time code on `api.servicegraph.co` and is bounced back. No client
-  ID or secret to copy around.
+- **Auth:** OAuth 2.1 + PKCE with Dynamic Client Registration — your harness
+  opens a browser tab on first use; you sign in on `servicegraph.co` and are
+  bounced back. No client ID or secret to copy around, no API key to paste.
 
 ### Claude Code
 
@@ -348,19 +363,26 @@ Here are 12 marketing agency domains I scraped — pull contact info and
 confirm which are in the US.
 ```
 
-## How it works — the four-tier funnel
+## How it works — browse free, unlock with credits
+
+Every dataset lives behind the same per-dataset URL shape and the same
+filter DSL. For the agencies dataset the id is `pro_services`:
 
 ```
-GET /v1/tags         →  field catalog · free · anonymous
-GET /v1/check        →  validate filter · free · anonymous
-GET /v1/explore      →  counts + breakdowns · free · anonymous
-GET /v1/search       →  brief firm cards · 200/month free
-GET /v1/get/{id}     →  full bundle (url, phone, email) · 50/month free
+GET  /v1/datasets/pro_services/fields    →  field catalog + DSL grammar · free
+GET  /v1/datasets/pro_services/check     →  validate a filter · free
+GET  /v1/datasets/pro_services/search    →  brief firm cards · free
+GET  /v1/datasets/pro_services/{apex}    →  one row (brief; detail if unlocked) · free
+POST /v1/datasets/pro_services/unlocks   →  full contact bundle · 10 credits/row
 ```
 
-Skills know to walk down the funnel: cheap tiers first, expensive tiers only
-on shortlisted firms. Re-pages and overlapping queries are free — the quota
-counts only **unique** firm-views per calendar month.
+Discovery, filtering, and brief cards are **free** — you only spend credits
+to unlock a row's full contact detail (URL, phone, email, social, address).
+An unlock lasts **30 days** and re-fetching within that window is free.
+
+- **2,000 free credits on signup**, no card.
+- **10 credits per row** (~$0.10). Top-ups: $10 / 1,000 credits, $80 / 10,000
+  (20% off). **Credits never expire.**
 
 ### Filter DSL
 
@@ -377,19 +399,21 @@ rating>=4 review_count_total>=20 has:clutch
 (web3 OR blockchain) state:CA
 ```
 
-Field catalog (kinds, operators, allowed values) is discoverable at runtime
-via [`/v1/tags`](https://api.servicegraph.co/v1/tags).
+The field catalog (kinds, operators, allowed values) is discoverable at
+runtime via
+[`/v1/datasets/pro_services/fields`](https://api.servicegraph.co/v1/datasets/pro_services/fields).
 
 ## Why structured beats search
 
 - **Filter, don't grep.** Industry, services, location, size, rating,
-  third-party listings — all queryable as a single filter string. Not a wall
-  of fuzzy web results.
-- **Try before you sign up.** `/v1/explore` is fully anonymous. Get counts
-  and breakdowns for any filter to size the candidate pool before spending an
-  API call.
-- **Quota rewards focus.** 200 unique firm-views per month free. Re-paging
-  or overlapping queries are free; only new firms count.
+  domain authority, traffic, third-party listings — all queryable as a single
+  filter string, not a wall of fuzzy web results.
+- **Metrics built in.** Every row carries the signals you'd otherwise scrape
+  by hand — agency ratings, directory DR/traffic, newsletter subscriber
+  counts — so an agent can rank, not just list.
+- **Cheaper than scraping.** Browse and filter for free; pay only for the
+  contact rows you actually want, ~$0.10 each, 30-day access, credits never
+  expire. Beats Google, ChatGPT guesses, and stale Notion/Twitter lists.
 
 ## Skill structure
 
@@ -405,8 +429,7 @@ copy-pasteable curl examples.
 
 - [API console & docs](https://docs.servicegraph.co)
 - [OpenAPI 3.1 spec](https://api.servicegraph.co/openapi.json)
-- [Field catalog](https://api.servicegraph.co/v1/tags) — live list of every
-  filterable field, kind, and allowed value
+- [Create an API key](https://servicegraph.co/profile/api-keys)
 - [llms.txt](https://servicegraph.co/llms.txt)
 - [Site](https://servicegraph.co)
 
