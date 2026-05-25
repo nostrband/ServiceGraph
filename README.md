@@ -18,7 +18,7 @@ contact data from. One filter DSL, one credit balance, many datasets:
 |---|---|---|
 | **Agencies** (US professional-services firms) | 110k+ | services · size · location · ratings |
 | **Business directories** | 3,500+ | industry · domain rating · traffic |
-| **Product directories** | 250+ | submission policy · domain rating · traffic |
+| **Product directories** | 850+ | submission policy · domain rating · traffic |
 | **Newsletters** | 50k+ | subscribers · topics · post cadence |
 | _subreddits, influencers_ | _coming soon_ | |
 
