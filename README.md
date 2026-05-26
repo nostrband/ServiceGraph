@@ -433,6 +433,11 @@ copy-pasteable curl examples.
 - [llms.txt](https://servicegraph.co/llms.txt)
 - [Site](https://servicegraph.co)
 
+## Community
+
+- [Dev.to](https://dev.to/brugeman)
+- [X.com](https://x.com/briugemanai)
+
 ## License
 
 MIT
