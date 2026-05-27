@@ -425,6 +425,10 @@ The skills in this repo are single-file. No bundled scripts or references
 yet — the API is small enough that the agent does fine with prose +
 copy-pasteable curl examples.
 
+## Learn more
+
+- [Product directories](https://servicegraph.co/product-directories)
+
 ## Links
 
 - [API console & docs](https://docs.servicegraph.co)
