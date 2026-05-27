@@ -466,6 +466,7 @@ copy-pasteable curl examples.
 ## See also
 
 - [Product directories](https://servicegraph.co/product-directories)
+- [MCP directories](https://servicegraph.co/blog/best-mcp-directories-2026)
 
 ## License
 
