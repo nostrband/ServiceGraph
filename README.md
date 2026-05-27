@@ -22,12 +22,15 @@ contact data from. One filter DSL, one credit balance, many datasets:
 | **Newsletters** | 50k+ | subscribers · topics · post cadence |
 | _subreddits, influencers_ | _coming soon_ | |
 
-**The skills in this repo cover the Agencies dataset today** — law,
+**The branded `servicegraph` skill works against every dataset** — say
+"servicegraph" and your agent discovers what datasets exist, learns each
+one's schema and filters, searches free, and unlocks detail with credits.
+**The specific `find-*` skills cover the Agencies dataset today** — law,
 marketing, design, consulting, accounting, IT services, AI/ML, web
 development, engineering, HR, PR, cybersecurity, and more, filterable by
 industry, services, location, size, ratings, and third-party listings.
-Skills for the directory, newsletter, and other datasets land here as they
-ship — same install, same API key, same DSL.
+More per-use-case skills for the directory, newsletter, and other datasets
+land here as they ship — same install, same API key, same DSL.
 
 Compatible with **19+ AI agents** including Claude Code, Codex, Cursor, GitHub
 Copilot, Gemini, Cline, Goose, Windsurf, and any other harness that supports
@@ -54,7 +57,29 @@ needs a key. Create one at
 `.env.local` as `SERVICEGRAPH_API_KEY=vk_…`. Skills prompt for it on first
 use and never read the value into the model's context.
 
-## Available Skills (Agencies dataset)
+## Available Skills
+
+### Any dataset
+
+<details open>
+<summary><strong>servicegraph</strong> — the branded entry point</summary>
+
+The generic, dataset-agnostic way to drive ServiceGraph. Launch it by naming
+the brand; it discovers what datasets exist and each one's schema and filters
+through the API, searches free brief rows, and unlocks contact + metric detail
+with credits — no datasets or fields hardcoded, so it stays correct as new
+data lands.
+
+**Use when:**
+- "Use ServiceGraph to find …"
+- "What datasets does ServiceGraph have?"
+- "Search ServiceGraph for … / look this up in ServiceGraph"
+- "Pull contacts from ServiceGraph for these domains"
+- The dataset you need has no specific skill below yet
+
+</details>
+
+### Agencies dataset
 
 <details open>
 <summary><strong>find-service-providers</strong> — the umbrella skill</summary>

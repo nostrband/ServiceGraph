@@ -4,12 +4,12 @@
     "name": "Artur Brugeman",
     "email": "artur@servicegraph.co"
   },
-  "description": "ServiceGraph plugins — Claude Code skills for finding, shortlisting, and enriching US professional-services firms via the ServiceGraph API.",
+  "description": "ServiceGraph plugins — Claude Code skills for discovering, filtering, and enriching metrics-rich business datasets (agencies, directories, newsletters, and more) via the ServiceGraph API.",
   "plugins": [
     {
       "name": "servicegraph",
       "source": "./",
-      "description": "Find, shortlist, vet, and enrich US professional-services firms — law, marketing, consulting, accounting, IT services, engineering, HR, PR, design — via the ServiceGraph API. Ships 13 skills covering the full B2B service-firm catalog.",
+      "description": "Drive the ServiceGraph API — metrics-enriched business datasets for founders (agencies, directories, newsletters, and more). Ships a branded `servicegraph` skill that works against any dataset, plus 14 specific skills for the US professional-services catalog — law, marketing, consulting, accounting, IT services, engineering, HR, PR, design, and more.",
       "category": "service-providers",
       "tags": [
         "servicegraph",
