@@ -25,12 +25,15 @@ contact data from. One filter DSL, one credit balance, many datasets:
 **The branded `servicegraph` skill works against every dataset** — say
 "servicegraph" and your agent discovers what datasets exist, learns each
 one's schema and filters, searches free, and unlocks detail with credits.
-**The specific `find-*` skills cover the Agencies dataset today** — law,
-marketing, design, consulting, accounting, IT services, AI/ML, web
-development, engineering, HR, PR, cybersecurity, and more, filterable by
-industry, services, location, size, ratings, and third-party listings.
-More per-use-case skills for the directory, newsletter, and other datasets
-land here as they ship — same install, same API key, same DSL.
+**The specific `find-*` skills cover two datasets today.** For the **Agencies**
+dataset — law, marketing, design, consulting, accounting, IT services, AI/ML,
+web development, engineering, HR, PR, cybersecurity, and more — filterable by
+industry, services, location, size, ratings, and third-party listings. And for
+the **Product directories** dataset — where to *launch* a software product and
+*earn backlinks* — covering general product/SaaS launches, MCP-server
+registries, and AI-tool / AI-agent / agent-skill directories, ranked by Domain
+Rating and organic traffic. More per-use-case skills for the newsletter and
+other datasets land here as they ship — same install, same API key, same DSL.
 
 Compatible with **19+ AI agents** including Claude Code, Codex, Cursor, GitHub
 Copilot, Gemini, Cline, Goose, Windsurf, and any other harness that supports
@@ -305,6 +308,57 @@ home wifi") is out of scope.
 - "Find me a pen-testing firm for our SOC 2 audit"
 - "We need an incident response retainer"
 - Indirect: "we got hit with ransomware last week — we need help fast"
+
+</details>
+
+### Product directories dataset
+
+Each row is a **directory you submit to** — not a firm and not a product.
+These skills answer *where to launch a software product and earn backlinks*:
+they rank listing sites by **Domain Rating** (free in every result, so you
+shortlist for zero credits) and unlock the **submission note** (how to submit,
+and whether the listing grants a backlink) plus organic traffic with credits.
+Global catalog, not US-only.
+
+<details open>
+<summary><strong>find-product-directories</strong> — the umbrella</summary>
+
+Find and rank directories to submit a **SaaS, software product, app, or
+startup** to — SaaS review sites, launch platforms (Product Hunt and its
+alternatives), and general software directories. Defers to
+`find-mcp-directories` and `find-ai-directories` for those niches.
+
+**Use when:**
+- "Where can I submit my B2B SaaS to get backlinks and launch-day traffic?"
+- "Give me a list of Product Hunt alternatives to launch our app on"
+- "Here are 10 software directory domains — pull submission details and rank by DR"
+
+</details>
+
+<details>
+<summary><strong>find-mcp-directories</strong></summary>
+
+Find and rank **MCP-server registries** (Model Context Protocol) — where to
+publish a server so agent builders discover it, ranked by domain authority.
+
+**Use when:**
+- "Where do I list my MCP server?"
+- "Best MCP directories and registries to submit our server to for backlinks"
+- Indirect: "we just built an MCP server — where do we publish it?"
+
+</details>
+
+<details>
+<summary><strong>find-ai-directories</strong></summary>
+
+Find and rank directories for **AI tools, AI agents, and agent skills /
+plugins** — where to list an AI product for backlinks and discovery. Defers to
+`find-mcp-directories` when the artifact is specifically an MCP server.
+
+**Use when:**
+- "Where can I list my AI tool to get backlinks and discovery?"
+- "Directories to submit my AI agent / where do I publish our agent skill?"
+- "Rank the top AI tool directories by domain rating for our SEO push"
 
 </details>
 

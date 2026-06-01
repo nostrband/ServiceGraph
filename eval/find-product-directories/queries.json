@@ -1,0 +1,92 @@
+{
+  "version": "1",
+  "skill": "find-product-directories",
+  "split_strategy": "Manual. The hardest cases are the sibling-skill deferrals (N1 MCP-server listing → find-mcp-directories, N2 AI-agent listing → find-ai-directories) and the 'find a directory vs find a product/firm' confusions (N3 hiring an SEO link-building firm, N4 recommend-a-product). Those go in train. Validation tests generalization across remaining launch/SEO phrasings and out-of-scope shapes.",
+  "passing_rule": "should_trigger=true → trigger_rate > 0.5 over 3 runs. should_trigger=false → trigger_rate ≤ 0.5.",
+  "queries": [
+    {
+      "id": "P1",
+      "split": "train",
+      "should_trigger": true,
+      "query": "where can I submit my new B2B SaaS to get backlinks and launch-day traffic?",
+      "notes": "Direct: submit a SaaS to directories for backlinks + reach — the core intent."
+    },
+    {
+      "id": "P2",
+      "split": "train",
+      "should_trigger": true,
+      "query": "give me a list of Product Hunt alternatives to launch our app on",
+      "notes": "Launch-platform framing; 'Product Hunt alternatives' is a canonical phrasing."
+    },
+    {
+      "id": "P3",
+      "split": "train",
+      "should_trigger": true,
+      "query": "we're launching our startup next week — where should we post it besides Product Hunt?",
+      "notes": "Indirect: describes the launch, never says 'directory'."
+    },
+    {
+      "id": "P4",
+      "split": "train",
+      "should_trigger": true,
+      "query": "high-authority software listing sites to get quality backlinks for SEO",
+      "notes": "SEO/backlink angle, 'listing sites' synonym for directories."
+    },
+    {
+      "id": "P5",
+      "split": "validation",
+      "should_trigger": true,
+      "query": "I scraped 10 software directory domains — pull the submission details and rank them by domain rating",
+      "notes": "BYO apex list (enrichment) + ranking by DR."
+    },
+    {
+      "id": "P6",
+      "split": "validation",
+      "should_trigger": true,
+      "query": "where do I list our mobile app so people discover it?",
+      "notes": "Mobile app variant of the launch/discovery intent."
+    },
+    {
+      "id": "N1",
+      "split": "train",
+      "should_trigger": false,
+      "query": "where do I list my MCP server?",
+      "notes": "HARD: MCP-server listing — should defer to find-mcp-directories."
+    },
+    {
+      "id": "N2",
+      "split": "train",
+      "should_trigger": false,
+      "query": "directories to submit my AI agent to",
+      "notes": "HARD: AI-agent listing — should defer to find-ai-directories."
+    },
+    {
+      "id": "N3",
+      "split": "train",
+      "should_trigger": false,
+      "query": "find me an SEO agency to do link-building for our SaaS",
+      "notes": "HARD: hiring a firm (backlink overlap) — should defer to find-seo-agency."
+    },
+    {
+      "id": "N4",
+      "split": "train",
+      "should_trigger": false,
+      "query": "recommend the best CRM software for our sales team",
+      "notes": "Finding a product, not a directory to submit to."
+    },
+    {
+      "id": "N5",
+      "split": "validation",
+      "should_trigger": false,
+      "query": "build me a directory website that lists SaaS tools",
+      "notes": "Do-the-work (build a site), not find-a-directory-to-submit-to."
+    },
+    {
+      "id": "N6",
+      "split": "validation",
+      "should_trigger": false,
+      "query": "I want to list my restaurant in local business directories",
+      "notes": "Brick-and-mortar / local business directory — different dataset, out of scope."
+    }
+  ]
+}

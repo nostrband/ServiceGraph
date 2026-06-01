@@ -1,0 +1,78 @@
+{
+  "version": "1",
+  "skill": "find-mcp-directories",
+  "split_strategy": "Manual. The hardest cases are the sibling-skill deferrals (N1 general AI-tool listing → find-ai-directories, N2 general SaaS launch → find-product-directories) and the 'find a directory vs find a server / hire a builder / DIY' confusions (N3 hiring a build firm, N4 recommend-a-server, N5 how-MCP-works). Those go in train. Validation tests generalization across remaining MCP-listing phrasings and out-of-scope shapes.",
+  "passing_rule": "should_trigger=true → trigger_rate > 0.5 over 3 runs. should_trigger=false → trigger_rate ≤ 0.5.",
+  "queries": [
+    {
+      "id": "P1",
+      "split": "train",
+      "should_trigger": true,
+      "query": "where do I list my MCP server?",
+      "notes": "Direct, canonical MCP-listing intent."
+    },
+    {
+      "id": "P2",
+      "split": "train",
+      "should_trigger": true,
+      "query": "best MCP directories and registries to submit our server to for backlinks",
+      "notes": "Names registries + backlink angle."
+    },
+    {
+      "id": "P3",
+      "split": "train",
+      "should_trigger": true,
+      "query": "we just built an MCP server — where do we publish it so agent builders find it?",
+      "notes": "Indirect: describes the artifact + discovery goal."
+    },
+    {
+      "id": "P4",
+      "split": "validation",
+      "should_trigger": true,
+      "query": "which Model Context Protocol registries have the highest domain authority?",
+      "notes": "Spelled-out 'Model Context Protocol' + DR/authority ranking."
+    },
+    {
+      "id": "P5",
+      "split": "validation",
+      "should_trigger": true,
+      "query": "here are 6 MCP directory domains I found — pull submission details and rank by DR",
+      "notes": "BYO apex list (enrichment) + ranking."
+    },
+    {
+      "id": "N1",
+      "split": "train",
+      "should_trigger": false,
+      "query": "where can I list my AI tool to get discovered?",
+      "notes": "HARD: general AI-tool listing — should defer to find-ai-directories."
+    },
+    {
+      "id": "N2",
+      "split": "train",
+      "should_trigger": false,
+      "query": "where can I submit my SaaS for a launch?",
+      "notes": "HARD: general SaaS launch — should defer to find-product-directories."
+    },
+    {
+      "id": "N3",
+      "split": "train",
+      "should_trigger": false,
+      "query": "find a firm to build an MCP server for us",
+      "notes": "HARD: hiring a build firm — should defer to find-software-developer / find-ai-consultancy."
+    },
+    {
+      "id": "N4",
+      "split": "train",
+      "should_trigger": false,
+      "query": "what's the best MCP server for connecting to Postgres?",
+      "notes": "Finding/using a server (a product), not a directory to submit to."
+    },
+    {
+      "id": "N5",
+      "split": "validation",
+      "should_trigger": false,
+      "query": "how does the Model Context Protocol actually work?",
+      "notes": "DIY / conceptual question, no submission intent."
+    }
+  ]
+}

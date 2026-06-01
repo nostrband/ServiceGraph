@@ -1,0 +1,78 @@
+{
+  "version": "1",
+  "skill": "find-ai-directories",
+  "split_strategy": "Manual. The hardest cases are the sibling-skill deferrals (N1 MCP-server listing → find-mcp-directories, N2 general non-AI SaaS launch → find-product-directories) and the 'find a directory vs hire a firm / compare products / DIY' confusions (N3 hiring an AI consultancy, N4 product comparison). Those go in train. Validation tests generalization across remaining AI-listing phrasings (agent skills, GPT apps) and out-of-scope shapes.",
+  "passing_rule": "should_trigger=true → trigger_rate > 0.5 over 3 runs. should_trigger=false → trigger_rate ≤ 0.5.",
+  "queries": [
+    {
+      "id": "P1",
+      "split": "train",
+      "should_trigger": true,
+      "query": "where can I list my AI tool to get backlinks and discovery?",
+      "notes": "Direct, core AI-tool listing intent."
+    },
+    {
+      "id": "P2",
+      "split": "train",
+      "should_trigger": true,
+      "query": "directories to submit my AI agent to so people find it",
+      "notes": "AI-agent variant."
+    },
+    {
+      "id": "P3",
+      "split": "train",
+      "should_trigger": true,
+      "query": "where do I publish our Claude agent skill so it gets discovered? any agent-skill directories?",
+      "notes": "Agent-skill / plugin registry variant — names the niche."
+    },
+    {
+      "id": "P4",
+      "split": "validation",
+      "should_trigger": true,
+      "query": "we built a GPT-powered app — where do we get it in front of people?",
+      "notes": "Indirect: describes an AI app + discovery goal, never says 'directory'."
+    },
+    {
+      "id": "P5",
+      "split": "validation",
+      "should_trigger": true,
+      "query": "rank the top AI tool directories by domain rating for our SEO push",
+      "notes": "SEO/backlink angle + ranking by DR."
+    },
+    {
+      "id": "N1",
+      "split": "train",
+      "should_trigger": false,
+      "query": "where do I list my MCP server?",
+      "notes": "HARD: MCP-server listing specifically — should defer to find-mcp-directories."
+    },
+    {
+      "id": "N2",
+      "split": "train",
+      "should_trigger": false,
+      "query": "where can I submit our project-management SaaS for a launch?",
+      "notes": "HARD: general non-AI SaaS launch — should defer to find-product-directories."
+    },
+    {
+      "id": "N3",
+      "split": "train",
+      "should_trigger": false,
+      "query": "find an AI/ML consultancy to build our recommendation model",
+      "notes": "HARD: hiring a firm — should defer to find-ai-consultancy."
+    },
+    {
+      "id": "N4",
+      "split": "train",
+      "should_trigger": false,
+      "query": "ChatGPT vs Claude — which AI assistant is better for coding?",
+      "notes": "Product comparison, no submission intent."
+    },
+    {
+      "id": "N5",
+      "split": "validation",
+      "should_trigger": false,
+      "query": "build me an AI tool that summarizes PDFs",
+      "notes": "Do-the-work, not find-a-directory-to-submit-to."
+    }
+  ]
+}
