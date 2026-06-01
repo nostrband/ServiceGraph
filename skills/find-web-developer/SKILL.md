@@ -1,13 +1,12 @@
 ---
 name: find-web-developer
 description: Use whenever the user wants to find, shortlist, vet, or enrich US web development firms — building, refreshing, or rebuilding marketing sites, landing pages, ecommerce, WordPress/Webflow/Shopify, headless CMS, microsites, and web frontend work. Triggers on "find a web developer for a marketing landing page", "shortlist three Webflow agencies in California", "rebuild our ecommerce site on Shopify", or "pull contact info for these 8 web dev shop domains", even when described indirectly (redesign and rebuild our site, ship a microsite). Drives the ServiceGraph API (api.servicegraph.co) — a 100k+ US firm catalog filterable by industry, services, location, size, ratings. Defer to find-software-developer for custom backend/API/mobile/internal-tool work — anything beyond a website. Defer to find-marketing-agency when scope spans broader marketing beyond the build. Skip in-house web-engineer hires, "how do I build X" DIY questions, hosting/CMS-product comparisons, non-US firms, individual freelancers.
-license: MIT
+version: "0.3.0"
 metadata:
   api_base: https://api.servicegraph.co
   dataset_id: pro_services
   industry: it_services
   service: web-development
-  version: "0.3"
 ---
 
 # find-web-developer

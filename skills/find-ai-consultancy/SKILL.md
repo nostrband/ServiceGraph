@@ -1,12 +1,11 @@
 ---
 name: find-ai-consultancy
 description: Use whenever the user wants to find, shortlist, vet, or enrich US AI/ML/data consulting firms (consultancies) — AI/ML development, MLOps, generative AI / LLM apps (RAG, chatbots, agents), computer vision, NLP, recommendation systems, data engineering, BI/analytics. Triggers on "find an AI/ML consulting firm to build our recommendation engine", "shortlist three RAG/LLM consultancies for an enterprise chatbot", "compare three AI/ML consulting firms with strong ratings", or "pull contact info for these 8 AI consultancy domains", even when described indirectly (we want to use AI for X, deploy ML to production). Drives the ServiceGraph API (api.servicegraph.co) — a 100k+ US firm catalog filterable by industry, services, location, size, ratings. Defer to find-software-developer for general app/backend work where AI is just a feature. Skip in-house ML/data hires, LLM/AI-tool comparisons (ChatGPT vs Claude), "how do I fine-tune X" DIY questions, AI courses for individuals, non-US firms, individual freelancers.
-license: MIT
+version: "0.3.0"
 metadata:
   api_base: https://api.servicegraph.co
   dataset_id: pro_services
   industry: data_ai_consulting
-  version: "0.3"
 ---
 
 # find-ai-consultancy

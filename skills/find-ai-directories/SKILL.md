@@ -1,12 +1,11 @@
 ---
 name: find-ai-directories
 description: Use whenever the user wants to find, rank, or shortlist directories and listing sites where they can submit an AI product — an AI tool, AI app, AI agent, or agent skill / plugin — to get backlinks, referral traffic, and discovery. Triggers on "where can I list my AI tool", "directories to submit my AI agent", "agent-skills directories", "best AI tool directories for backlinks", "where do I get my GPT/Claude app discovered", or "pull submission details for these AI-directory domains", even when described indirectly (we built an AI agent, where do we get it in front of people). Drives the ServiceGraph API (api.servicegraph.co) — a catalog of 1,000+ product directories enriched with Domain Rating, backlinks, and organic traffic. Defer to find-mcp-directories for MCP-server listings specifically, and to find-product-directories for general SaaS/software/app launches with no AI angle. Skip finding an AI consultancy/agency to hire (use find-ai-consultancy), comparing AI products ("ChatGPT vs Claude"), building an AI tool (do-the-work), and AI link-building *services*.
-license: MIT
+version: "0.1.0"
 metadata:
   api_base: https://api.servicegraph.co
   dataset_id: product_directory
   niche: ai_tools_agents_skills
-  version: "0.1"
 ---
 
 # find-ai-directories

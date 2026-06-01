@@ -1,12 +1,11 @@
 ---
 name: find-law-firm
 description: Use whenever the user wants to find, shortlist, vet, or enrich US B2B law firms — corporate, IP/patent, M&A and securities, employment, commercial litigation, regulatory/compliance, data privacy/cyber, real estate, and tax. Triggers on "find three boutique IP law firms in California", "shortlist M&A counsel for a Series-B fundraise", "patent prosecution for our hardware startup", or "pull contact info for these 10 law firm domains", even when described indirectly (outside counsel, cap-table review, GDPR/SOC2 oversight). Drives the ServiceGraph API (api.servicegraph.co) — a 100k+ US firm catalog filterable by industry, services, location, size, ratings. Skip personal/consumer legal services where the user is the end client (divorce, personal injury, criminal defense, family law, estate planning, wills) — the catalog is B2B-only. Also skip in-house GC hires, "is this NDA enforceable" DIY questions, non-US firms, individual freelancers.
-license: MIT
+version: "0.2.0"
 metadata:
   api_base: https://api.servicegraph.co
   dataset_id: pro_services
   industry: legal
-  version: "0.2"
 ---
 
 # find-law-firm

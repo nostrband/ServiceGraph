@@ -1,11 +1,10 @@
 ---
 name: servicegraph
-description: The branded entry point to ServiceGraph — use whenever the user explicitly names **ServiceGraph**: "use ServiceGraph to…", "what datasets does ServiceGraph have", "search ServiceGraph for…", "look this up in ServiceGraph", "pull contacts from ServiceGraph for these domains", "how many credits do I have on ServiceGraph". ServiceGraph is a multi-dataset platform of metrics-enriched business data for founders — where to launch, who to email, who to hire. This skill explains how to drive the API (api.servicegraph.co / mcp.servicegraph.co) against ANY dataset: discover what datasets exist, discover a dataset's schema and filters, search free brief rows, and unlock contact + metric detail with credits. Dataset-agnostic by design — it discovers everything through the API and never assumes which datasets or fields exist. When the user describes an intent WITHOUT naming ServiceGraph (e.g. "find a PR agency in NY"), defer to the matching specific skill (find-pr-agency, find-marketing-agency, find-law-firm, …); this skill is for explicit ServiceGraph requests and for datasets no specific skill covers yet. Skip non-US firms, consumer/personal services, and individual freelancers.
-license: MIT
+description: The branded entry point to ServiceGraph — use whenever the user explicitly names **ServiceGraph** — "use ServiceGraph to…", "what datasets does ServiceGraph have", "search ServiceGraph for…", "look this up in ServiceGraph", "pull contacts from ServiceGraph for these domains", "how many credits do I have on ServiceGraph". ServiceGraph is a multi-dataset platform of metrics-enriched business data for founders — where to launch, who to email, who to hire. This skill explains how to drive the API (api.servicegraph.co / mcp.servicegraph.co) against ANY dataset — discover what datasets exist, discover a dataset's schema and filters, search free brief rows, and unlock contact + metric detail with credits. Dataset-agnostic by design — it discovers everything through the API and never assumes which datasets or fields exist. When the user describes an intent WITHOUT naming ServiceGraph (e.g. "find a PR agency in NY"), defer to the matching specific skill (find-pr-agency, find-marketing-agency, find-law-firm, …); this skill is for explicit ServiceGraph requests and for datasets no specific skill covers yet. Skip non-US firms, consumer/personal services, and individual freelancers.
+version: "0.1.0"
 metadata:
   api_base: https://api.servicegraph.co
   mcp_url: https://mcp.servicegraph.co
-  version: "0.1"
 ---
 
 # servicegraph

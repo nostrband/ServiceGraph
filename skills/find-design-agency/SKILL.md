@@ -1,12 +1,11 @@
 ---
 name: find-design-agency
 description: Use whenever the user wants to find, shortlist, vet, or enrich US design and creative agencies — graphic design, UX/UI, product design, brand identity, packaging, illustration, motion design, and creative direction. Triggers on "find me a UX/UI design agency for our SaaS product", "shortlist three brand-identity studios in NY", "packaging design firm for a CPG launch", or "pull contact info for these 10 design studio domains", even when described indirectly (brand refresh, design our app, build our visual system). Drives the ServiceGraph API (api.servicegraph.co) — a 100k+ US firm catalog filterable by industry, services, location, size, ratings. Defer to find-marketing-agency for marketing-led engagements where design is one of several services. Defer to find-web-developer when the deliverable is a built website. Skip in-house designer hires, "design me a logo" DIY asks, design-software comparisons, consumer/personal-design (weddings, hobby projects), non-US firms, individual freelancers.
-license: MIT
+version: "0.3.0"
 metadata:
   api_base: https://api.servicegraph.co
   dataset_id: pro_services
   industry: design_creative
-  version: "0.3"
 ---
 
 # find-design-agency

@@ -1,12 +1,11 @@
 ---
 name: find-cpa-firm
 description: Use whenever the user wants to find, shortlist, vet, or enrich US accounting and tax firms (CPA firms) — financial-statement audit, SOC 1/2 audit, corporate tax, bookkeeping for businesses, advisory/fractional CFO, M&A diligence, 409A valuations, R&D tax credits, IPO readiness, sales-and-use tax. Triggers on "find me a CPA firm for our delaware c-corp series A audit", "shortlist three audit firms with SaaS experience", "we need a tax advisor for our M&A", or "pull contact info for these 10 accounting firm domains", even when described indirectly (audit our books, fractional CFO support, file our 1120). Drives the ServiceGraph API (api.servicegraph.co) — a 100k+ US firm catalog filterable by industry, services, location, size, ratings. Skip personal/consumer tax preparation (1040, individual estate, retirement planning), in-house controller/CFO hires, "how do I file my taxes" DIY questions, accounting-software comparisons (QuickBooks vs Xero), non-US firms, individual freelance bookkeepers.
-license: MIT
+version: "0.2.0"
 metadata:
   api_base: https://api.servicegraph.co
   dataset_id: pro_services
   industry: accounting_tax
-  version: "0.2"
 ---
 
 # find-cpa-firm

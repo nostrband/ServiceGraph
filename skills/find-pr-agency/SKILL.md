@@ -1,12 +1,11 @@
 ---
 name: find-pr-agency
 description: Use whenever the user wants to find, shortlist, vet, or enrich US public-relations and communications agencies — media relations, crisis comms, investor relations (IR), product-launch PR, tech/startup PR, healthcare PR, B2B PR, public affairs, brand reputation, and internal communications. Triggers on "find me a tech PR agency in NY", "shortlist three IR firms for our IPO", "we need crisis comms help for a brand reputation issue", or "pull contact info for these 10 PR firm domains", even when described indirectly (we need press, get us into TechCrunch, manage our brand reputation). Drives the ServiceGraph API (api.servicegraph.co) — a 100k+ US firm catalog filterable by industry, services, location, size, ratings. Defer to find-marketing-agency when scope is broader marketing beyond PR/comms. Skip in-house PR/comms hires, "write me a press release" DIY asks, PR-software comparisons (Cision, Muck Rack), influencer-marketplace questions, non-US firms, individual freelance PR people.
-license: MIT
+version: "0.3.0"
 metadata:
   api_base: https://api.servicegraph.co
   dataset_id: pro_services
   service: public-relations
-  version: "0.3"
 ---
 
 # find-pr-agency

@@ -1,12 +1,11 @@
 ---
 name: find-engineering-firm
 description: Use whenever the user wants to find, shortlist, vet, or enrich US engineering firms — civil, structural, MEP, mechanical, electrical, geotechnical, transportation, environmental, and manufacturing. **For real-world engineering (buildings, infrastructure, manufacturing) — NOT software engineering.** Triggers on "find civil engineering firms in Florida for transportation", "shortlist three structural engineering firms with high-rise experience", "MEP consultancy for a hospital project", or "pull contact info for these 12 engineering firm domains", even when described indirectly (PE-stamped drawings, building-permit review). Drives the ServiceGraph API (api.servicegraph.co) — a 100k+ US firm catalog filterable by industry, services, location, size, ratings. Defer software-dev / "engineering team" / SaaS-architecture asks to find-software-developer. Skip in-house engineering-manager hires, DIY questions, software-product comparisons (Revit, AutoCAD), non-US firms, individual freelancers.
-license: MIT
+version: "0.3.0"
 metadata:
   api_base: https://api.servicegraph.co
   dataset_id: pro_services
   industry: engineering_services
-  version: "0.3"
 ---
 
 # find-engineering-firm

@@ -1,12 +1,11 @@
 ---
 name: find-mcp-directories
 description: Use whenever the user wants to find, rank, or shortlist directories and registries where they can submit or list an MCP server (Model Context Protocol server) — to get backlinks, referral traffic, and discovery by agent builders. Triggers on "where do I list my MCP server", "best MCP directories", "MCP registries to submit to", "get my MCP server discovered", or "pull submission details for these MCP-directory domains", even when described indirectly (we built an MCP server, where do we publish it). Drives the ServiceGraph API (api.servicegraph.co) — a catalog of 1,000+ product directories enriched with Domain Rating, backlinks, and organic traffic. Defer to find-ai-directories for general AI-tool / AI-agent / agent-skill listings, and to find-product-directories for general SaaS/software launches. Skip building an MCP server or asking how MCP works (DIY), finding a firm to build one (use find-ai-consultancy / find-software-developer), and MCP link-building *services*.
-license: MIT
+version: "0.1.0"
 metadata:
   api_base: https://api.servicegraph.co
   dataset_id: product_directory
   niche: mcp_servers
-  version: "0.1"
 ---
 
 # find-mcp-directories

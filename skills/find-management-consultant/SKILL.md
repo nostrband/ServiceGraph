@@ -1,12 +1,11 @@
 ---
 name: find-management-consultant
 description: Use whenever the user wants to find, shortlist, vet, or enrich US management consultancies — strategy, operations, executive coaching, leadership development, org-development/change management, PMO/program management, sales/revenue operations consulting. Triggers on "find me three top strategy consultancies in California", "shortlist boutique ops-consulting firms with healthcare experience", "we need an executive coach for our new CEO", or "pull contact info for these 10 consulting firm domains", even when described indirectly (post-merger integration help, change-management partner, fractional COO). Drives the ServiceGraph API (api.servicegraph.co) — a 100k+ US firm catalog filterable by industry, services, location, size, ratings. Skip in-house strategy hires, "help me build a strategy" do-the-work asks, framework comparisons (Lean vs Agile, BCG matrix, etc.), academic/MBA-program questions, life/career coaching for individuals, non-US firms, individual freelancers.
-license: MIT
+version: "0.3.0"
 metadata:
   api_base: https://api.servicegraph.co
   dataset_id: pro_services
   industry: management_consulting
-  version: "0.3"
 ---
 
 # find-management-consultant

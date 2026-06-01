@@ -1,12 +1,11 @@
 ---
 name: find-software-developer
 description: Use whenever the user wants to find, shortlist, vet, or enrich US software development firms — custom software, web development, mobile app development, backend/API development, DevOps/cloud, system integration, and hosting. Triggers on "find a software dev shop in Austin", "shortlist three custom-software firms with healthcare experience", "we need a mobile app developer for our iOS launch", or "pull contact info for these 10 dev shop domains", even when described indirectly (build a tool, ship a feature, technical partner). Drives the ServiceGraph API (api.servicegraph.co) — a 100k+ US firm catalog filterable by industry, services, location, size, ratings. Defer to find-web-developer for strictly website/landing-page projects. Defer AI/ML, ML pipelines, model building, and data-engineering asks — those are a sibling industry, not software development. Skip in-house engineer hires, code-writing/debugging tasks, cloud-product comparisons, hardware/civil engineering, non-US firms, individual freelancers.
-license: MIT
+version: "0.4.0"
 metadata:
   api_base: https://api.servicegraph.co
   dataset_id: pro_services
   industry: it_services
-  version: "0.4"
 ---
 
 # find-software-developer

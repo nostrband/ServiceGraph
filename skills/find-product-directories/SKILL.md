@@ -1,12 +1,11 @@
 ---
 name: find-product-directories
 description: Use whenever the user wants to find, rank, or shortlist directories, listing sites, or launch platforms where they can submit a software product, SaaS, app, tool, or startup — to get backlinks, referral traffic, and launch-day reach. Triggers on "where can I submit my SaaS for launch", "list of Product Hunt alternatives", "directories to get backlinks for our app", "high-authority software listing sites", "where should I list my startup", or "pull submission details for these 8 directory domains", even when described indirectly (we're launching next week, where do we post; how do we get backlinks by listing in directories). Drives the ServiceGraph API (api.servicegraph.co) — a catalog of 1,000+ product directories enriched with Domain Rating, backlinks, and organic traffic. Defer to find-mcp-directories for MCP-server listings and find-ai-directories for AI-tool / AI-agent / agent-skill listings. Skip finding a firm/agency to hire (use the find-* agency skills), finding products *inside* a directory ("recommend the best CRM"), building a directory site (do-the-work), local/business directories for brick-and-mortar listings, and link-building *services*.
-license: MIT
+version: "0.1.0"
 metadata:
   api_base: https://api.servicegraph.co
   dataset_id: product_directory
   niche: product_saas_launch
-  version: "0.1"
 ---
 
 # find-product-directories

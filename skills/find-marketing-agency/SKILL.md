@@ -1,12 +1,11 @@
 ---
 name: find-marketing-agency
 description: Use whenever the user wants to find, shortlist, vet, or enrich US marketing agencies — including branding, content marketing, PPC/paid media, social media, email marketing, performance/demand-gen, video production, and full-service digital agencies. Triggers on requests like "shortlist three B2B branding agencies in California", "find a PPC shop with ecommerce experience", "we need a content marketing partner for a SaaS launch", or "pull contact info for these 12 agency domains", even when the need is described indirectly. Drives the ServiceGraph API (api.servicegraph.co) — a 100k+ US firm catalog filterable by industry, services, location, size, ratings, and third-party listings. Skip SEO-only asks (use find-seo-agency), web/software-development asks (use find-web-developer or find-software-developer), recruiting an in-house marketing hire, "write me a marketing plan" do-the-work asks, non-US firms, individual freelancers, marketing-software-product recommendations, and consumer/personal-brand asks.
-license: MIT
+version: "0.4.0"
 metadata:
   api_base: https://api.servicegraph.co
   dataset_id: pro_services
   industry: marketing_agency
-  version: "0.4"
 ---
 
 # find-marketing-agency

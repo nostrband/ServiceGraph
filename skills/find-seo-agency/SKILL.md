@@ -1,13 +1,12 @@
 ---
 name: find-seo-agency
 description: Use whenever the user wants to find, shortlist, vet, or enrich US SEO agencies — technical SEO, on-page/off-page, link-building, content-led SEO, local SEO, ecommerce SEO, B2B SEO, and SEO audits. Triggers on "find me an SEO agency in Texas", "shortlist three technical SEO consultancies for SaaS", "link-building and on-page for our ecommerce store", or "pull contact info for these 8 SEO firm domains", even when described indirectly (organic traffic flat, improve Google rankings, search visibility). Drives the ServiceGraph API (api.servicegraph.co) — a 100k+ US firm catalog filterable by industry, services, location, size, ratings, third-party listings. Defer to find-marketing-agency when scope spans multiple marketing services beyond SEO. Skip SEM/PPC/paid-search asks, web-dev asks (use find-web-developer), "how do I rank" DIY questions, SEO tool recommendations (Ahrefs, Semrush), in-house SEO hires, non-US firms, individual freelancers.
-license: MIT
+version: "0.2.0"
 metadata:
   api_base: https://api.servicegraph.co
   dataset_id: pro_services
   industry: marketing_agency
   service: seo
-  version: "0.2"
 ---
 
 # find-seo-agency

@@ -1,11 +1,10 @@
 ---
 name: find-service-providers
 description: Use whenever the user wants to find, shortlist, vet, enrich, or research US professional-services firms — law, marketing, consulting, accounting, IT services, architecture, engineering, HR, PR, design, and similar B2B service providers. Triggers on requests like "find me a PPC agency in California", "shortlist three boutique IP law firms", "build a longlist of 50 mid-size IT consultancies", or "here are 12 agency domains — pull contact info and confirm which are US-based", even when the need is described indirectly without naming a category. Drives the ServiceGraph API (api.servicegraph.co) — a 100k+ US firm catalog with filters for industry, services, location, size, ratings, and third-party listings. Skip when the user is asking for personal/consumer services for themselves (an individual's own legal, tax, or medical needs), non-US firms, individual freelancers, retail/ecommerce/SaaS-product companies, recruiting-an-employee tasks, or general web research that doesn't need a structured firm directory.
-license: MIT
+version: "0.3.0"
 metadata:
   api_base: https://api.servicegraph.co
   dataset_id: pro_services
-  version: "0.3"
 ---
 
 # find-service-providers

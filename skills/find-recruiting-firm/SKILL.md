@@ -1,12 +1,11 @@
 ---
 name: find-recruiting-firm
 description: Use whenever the user wants to find, shortlist, vet, or enrich US recruiting and staffing firms — executive search/retained search, RPO, tech/sales/healthcare recruiting, contingent/contract staffing, and temp staffing. Triggers on "find me an executive search firm for a CFO search", "shortlist three retained-search boutiques in NY focused on tech", "we need RPO support for a 50-engineer hiring push", or "pull contact info for these 8 staffing firm domains", even when described indirectly (need help hiring at scale, executive recruiter for senior roles). Drives the ServiceGraph API (api.servicegraph.co) — a 100k+ US firm catalog filterable by industry, services, location, size, ratings. Skip when the user wants to hire someone as their own employee (job-board questions, in-house recruiter hires, "where should I post the role"), individual job-seekers looking for recruiters to represent them, candidate-side career coaching, non-US firms, individual freelance recruiters.
-license: MIT
+version: "0.2.0"
 metadata:
   api_base: https://api.servicegraph.co
   dataset_id: pro_services
   industry: hr_recruiting_staffing
-  version: "0.2"
 ---
 
 # find-recruiting-firm
