@@ -522,6 +522,7 @@ copy-pasteable curl examples.
 - [Product directories](https://servicegraph.co/product-directories)
 - [MCP directories](https://servicegraph.co/blog/best-mcp-directories-2026)
 - [Agent skills directories](https://dev.to/brugeman/where-to-publish-your-ai-agent-skills-discovery-hubs-and-directories-5l7)
+- [ProductHunt](https://www.producthunt.com/@arturbrugeman)
 
 ## License
 
